@@ -3,7 +3,21 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_2.xsd"
              version="3.2">
-    <persistence-unit name="default">
+    <persistence-unit name="cliniquePU" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+        <!-- entities packages or list of classes (optional) -->
+        <properties>
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5433/clinique_db"/>
+            <property name="javax.persistence.jdbc.user" value="clinique_user"/>
+            <property name="javax.persistence.jdbc.password" value="secret123"/>
+
+            <!-- Hibernate properties (dev) -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/> <!-- use 'validate' or remove in prod -->
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
     </persistence-unit>
 </persistence>

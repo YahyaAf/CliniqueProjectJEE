@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  postgres-db:
+    image: postgres:15
+    container_name: clinique-postgres
+    ports:
+      - "5433:5432"   
+    environment:
+      POSTGRES_USER: clinique_user
+      POSTGRES_PASSWORD: secret123
+      POSTGRES_DB: clinique_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+  pgadmin:
+    image: dpage/pgadmin4:7
+    container_name: clinique-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@clinique.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    depends_on:
+      - postgres-db
+    restart: always
+
+volumes:
+  pgdata:
