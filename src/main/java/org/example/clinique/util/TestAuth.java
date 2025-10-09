@@ -22,9 +22,9 @@ public class TestAuth {
         );
 
         User user = new User();
-        user.setFullName("hamza mc");
-        user.setEmail("hamza@gmail.com");
-        user.setPassword("hamza123");
+        user.setFullName("admin yahya");
+        user.setEmail("admin@gmail.com");
+        user.setPassword("admin123");
 
 //        Patient patient = new Patient();
 //        patient.setCin("EE123456");
@@ -43,8 +43,10 @@ public class TestAuth {
 //        doctor.setMatricule("CN5555");
 //        authService.registerDoctor(user,doctor);
 
-//        authService.login("zakaria@gmail.com","zakaria123");
-//        authService.logout();
+//        authService.registerAdmin(user);
+
+        authService.login("admin@gmail.com","admin123");
+        authService.logout();
 
     }
 

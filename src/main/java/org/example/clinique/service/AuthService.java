@@ -74,6 +74,18 @@ public class AuthService {
         }
     }
 
+    public void registerAdmin(User user){
+        try{
+            user.setRole(Role.ADMIN);
+            user.setPassword(hashPassword(user.getPassword()));
+            userRepository.saveAndFlush(user);
+
+            System.out.println("Admin added Success!");
+        }catch(Exception e){
+            System.out.println("Error in create staff "+e.getMessage());
+        }
+    }
+
     public boolean login(String email, String password){
         try{
             Optional<User> userOpt = userRepository.findByEmail(email);
