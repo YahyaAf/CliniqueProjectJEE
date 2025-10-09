@@ -1,5 +1,6 @@
 package org.example.clinique.util;
 
+import org.example.clinique.model.Doctor;
 import org.example.clinique.model.Patient;
 import org.example.clinique.model.Staff;
 import org.example.clinique.model.User;
@@ -21,9 +22,9 @@ public class TestAuth {
         );
 
         User user = new User();
-        user.setFullName("zakaria zidox");
-        user.setEmail("zakaria@gmail.com");
-        user.setPassword("zakaria");
+        user.setFullName("hamza izou");
+        user.setEmail("hamza@gmail.com");
+        user.setPassword("hamza123");
 
 //        Patient patient = new Patient();
 //        patient.setCin("EE123456");
@@ -32,10 +33,15 @@ public class TestAuth {
 //        patient.setBloodType(BloodType.A_NEGATIVE);
 //        patient.setInsuranceNumber("wafa assurance");
 //        authService.registerPatient(user, patient);
-        Staff staff = new Staff();
-        staff.setUser(user);
-        staff.setPosition("Organisateur");
-        authService.registerStaff(user,staff);
+
+//        Staff staff = new Staff();
+//        staff.setUser(user);
+//        staff.setPosition("Organisateur");
+//        authService.registerStaff(user,staff);
+
+        Doctor doctor = new Doctor();
+        doctor.setMatricule("CN5555");
+        authService.registerDoctor(user,doctor);
     }
 
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import org.example.clinique.config.JpaUtil;
 import org.example.clinique.model.Doctor;
+import org.example.clinique.model.User;
 import org.example.clinique.repository.DoctorRepository;
 
 import java.util.List;
@@ -59,14 +60,14 @@ public class DoctorRepositoryImpl implements DoctorRepository {
     }
 
     @Override
-    public Optional<Doctor> findByUserId(UUID userId) {
+    public Optional<Doctor> findByUser(User user) {
         EntityManager em = JpaUtil.getEntityManager();
         try {
             TypedQuery<Doctor> query = em.createQuery(
-                    "SELECT d FROM Doctor d WHERE d.userId = :userId",
+                    "SELECT d FROM Doctor d WHERE d.user = :user",
                     Doctor.class
             );
-            query.setParameter("userId", userId);
+            query.setParameter("user", user);
             List<Doctor> result = query.getResultList();
             if (result.isEmpty()) {
                 return Optional.empty();

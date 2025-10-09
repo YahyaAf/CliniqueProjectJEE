@@ -46,9 +46,9 @@ public class AuthService {
     public void registerDoctor(User user, Doctor doctor){
         try{
             user.setRole(Role.DOCTOR);
-            userRepository.save(user);
+            userRepository.saveAndFlush(user);
 
-            doctor.setUserId(user.getId());
+            doctor.setUser(user);
             doctor.setSpecialiteId(null);
             doctorRepository.save(doctor);
             System.out.println("Doctor added Success!");

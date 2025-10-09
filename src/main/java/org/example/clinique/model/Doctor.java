@@ -14,8 +14,9 @@ public class Doctor {
     @Column(name = "matricule", nullable = false, unique = true)
     private String matricule;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "specialite_id")
     private UUID specialiteId;
@@ -38,12 +39,12 @@ public class Doctor {
         this.matricule = matricule;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public UUID getSpecialiteId() {
