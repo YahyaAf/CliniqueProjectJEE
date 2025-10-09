@@ -9,6 +9,7 @@ import org.example.clinique.repository.DoctorRepository;
 import org.example.clinique.repository.PatientRepository;
 import org.example.clinique.repository.StaffRepository;
 import org.example.clinique.repository.UserRepository;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
 
@@ -32,6 +33,7 @@ public class AuthService {
     public void registerPatient(User user, Patient patient) {
         try {
             user.setRole(Role.PATIENT);
+            user.setPassword(hashPassword(user.getPassword()));
             userRepository.saveAndFlush(user);
             patient.setUser(user);
             patientRepository.save(patient);
@@ -46,6 +48,7 @@ public class AuthService {
     public void registerDoctor(User user, Doctor doctor){
         try{
             user.setRole(Role.DOCTOR);
+            user.setPassword(hashPassword(user.getPassword()));
             userRepository.saveAndFlush(user);
 
             doctor.setUser(user);
@@ -60,6 +63,7 @@ public class AuthService {
     public void registerStaff(User user, Staff staff){
         try{
             user.setRole(Role.STAFF);
+            user.setPassword(hashPassword(user.getPassword()));
             userRepository.saveAndFlush(user);
 
             staff.setUser(user);
@@ -78,8 +82,8 @@ public class AuthService {
                 return false;
             }
             User user = userOpt.get();
-            if(!user.getPassword().equals(password)){
-                System.out.println("Password is incorrect!!");
+            if (!checkPassword(password, user.getPassword())) {
+                System.out.println("Password is incorrect!");
                 return false;
             }
             this.currentUser= user;
@@ -102,5 +106,13 @@ public class AuthService {
 
     public User getCurrentUser(){
         return this.currentUser;
+    }
+
+    private String hashPassword(String plainPassword) {
+        return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+    }
+
+    private boolean checkPassword(String plainPassword, String hashedPassword) {
+        return BCrypt.checkpw(plainPassword, hashedPassword);
     }
 }

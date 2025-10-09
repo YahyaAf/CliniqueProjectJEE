@@ -21,10 +21,10 @@ public class TestAuth {
                 new StaffRepositoryImpl()
         );
 
-//        User user = new User();
-//        user.setFullName("hamza izou");
-//        user.setEmail("hamza@gmail.com");
-//        user.setPassword("hamza123");
+        User user = new User();
+        user.setFullName("hamza mc");
+        user.setEmail("hamza@gmail.com");
+        user.setPassword("hamza123");
 
 //        Patient patient = new Patient();
 //        patient.setCin("EE123456");
@@ -43,7 +43,7 @@ public class TestAuth {
 //        doctor.setMatricule("CN5555");
 //        authService.registerDoctor(user,doctor);
 
-//        authService.login("hamza@gmail.com","hamza123");
+//        authService.login("zakaria@gmail.com","zakaria123");
 //        authService.logout();
 
     }
