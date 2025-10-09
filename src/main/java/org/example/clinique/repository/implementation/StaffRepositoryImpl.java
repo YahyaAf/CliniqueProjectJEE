@@ -6,6 +6,7 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import org.example.clinique.config.JpaUtil;
 import org.example.clinique.model.Staff;
+import org.example.clinique.model.User;
 import org.example.clinique.repository.StaffRepository;
 
 import java.util.List;
@@ -52,11 +53,11 @@ public class StaffRepositoryImpl implements StaffRepository {
         });
     }
 
-    public Optional<Staff> findByUserId(UUID userId){
+    public Optional<Staff> findByUser(User user){
         EntityManager em = JpaUtil.getEntityManager();
         try{
-            TypedQuery<Staff> query = em.createQuery("SELECT s FROM Staff s WHERE s.userId=:userId", Staff.class);
-            query.setParameter("userId",userId);
+            TypedQuery<Staff> query = em.createQuery("SELECT s FROM Staff s WHERE s.user=:user", Staff.class);
+            query.setParameter("user",user);
             List<Staff> result = query.getResultList();
             if(result.isEmpty()){
                 return Optional.empty();

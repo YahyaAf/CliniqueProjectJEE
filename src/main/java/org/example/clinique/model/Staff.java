@@ -15,15 +15,11 @@ public class Staff {
     @Column(nullable = false)
     private String position;
 
-    @Column(name="user_id",nullable = false)
-    private UUID userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Staff(){}
-
-    public Staff(String position, UUID userId){
-        this.position = position;
-        this.userId = userId;
-    }
 
     public UUID getId() {
         return id;
@@ -41,11 +37,11 @@ public class Staff {
         this.position = position;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

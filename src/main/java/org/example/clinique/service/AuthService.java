@@ -60,9 +60,9 @@ public class AuthService {
     public void registerStaff(User user, Staff staff){
         try{
             user.setRole(Role.STAFF);
-            userRepository.save(user);
+            userRepository.saveAndFlush(user);
 
-            staff.setUserId(user.getId());
+            staff.setUser(user);
             staffRepository.save(staff);
             System.out.println("Staff added Success!");
         }catch(Exception e){
