@@ -32,8 +32,9 @@ public class Patient {
     @Column(name = "insurance_number")
     private String insuranceNumber;
 
-    @Column(name = "user_id", nullable = false)
-    private UUID userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     // Constructors
     public Patient() {}
@@ -87,11 +88,11 @@ public class Patient {
         this.insuranceNumber = insuranceNumber;
     }
 
-    public UUID getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -12,4 +12,6 @@ public interface UserRepository {
     List<User> findAll();
     void update(User user);
     void delete(UUID id);
+    Optional<User> findByEmail(String email);
+    void saveAndFlush(User user);
 }

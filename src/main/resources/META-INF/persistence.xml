@@ -6,7 +6,11 @@
     <persistence-unit name="cliniquePU" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-        <!-- entities packages or list of classes (optional) -->
+            <!-- entities packages or list of classes (optional) -->
+            <class>org.example.clinique.model.User</class>
+            <class>org.example.clinique.model.Patient</class>
+            <class>org.example.clinique.model.Doctor</class>
+            <class>org.example.clinique.model.Staff</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5433/clinique_db"/>

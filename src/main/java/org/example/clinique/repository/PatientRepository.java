@@ -1,6 +1,7 @@
 package org.example.clinique.repository;
 
 import org.example.clinique.model.Patient;
+import org.example.clinique.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,5 +13,5 @@ public interface PatientRepository {
     List<Patient> findAll();
     void update(Patient patient);
     void delete(UUID id);
-    Optional<Patient> findByUserId(UUID userId);
+    Optional<Patient> findByUser(User user);
 }

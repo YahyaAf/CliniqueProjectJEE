@@ -58,6 +58,21 @@ public class UserRepositoryImpl implements UserRepository {
         });
     }
 
+    public Optional<User> findByEmail(String email){
+        EntityManager em = JpaUtil.getEntityManager();
+        try{
+            TypedQuery<User> query = em.createQuery("SELECT u FROM User u WHERE LOWER(u.email) = LOWER(:email)", User.class);
+            query.setParameter("email",email);
+            List<User> result = query.getResultList();
+            if(result.isEmpty()){
+                return Optional.empty();
+            }
+            return Optional.of(result.get(0));
+        }finally {
+            em.close();
+        }
+    }
+
     private void executeInTransaction(EntityManagerConsumer action) {
         EntityManager em = JpaUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -73,6 +88,13 @@ public class UserRepositoryImpl implements UserRepository {
         } finally {
             em.close();
         }
+    }
+
+    public void saveAndFlush(User user) {
+        executeInTransaction(em -> {
+            em.persist(user);
+            em.flush();
+        });
     }
 
     @FunctionalInterface

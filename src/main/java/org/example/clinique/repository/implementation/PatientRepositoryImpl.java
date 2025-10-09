@@ -5,6 +5,7 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import org.example.clinique.config.JpaUtil;
 import org.example.clinique.model.Patient;
+import org.example.clinique.model.User;
 import org.example.clinique.repository.PatientRepository;
 
 import java.util.List;
@@ -75,14 +76,14 @@ public class PatientRepositoryImpl implements PatientRepository {
         }
     }
 
-    public Optional<Patient> findByUserId(UUID userId) {
+    public Optional<Patient> findByUser(User user) {
         EntityManager em = JpaUtil.getEntityManager();
         try {
             TypedQuery<Patient> query = em.createQuery(
-                    "SELECT p FROM Patient p WHERE p.userId = :userId",
+                    "SELECT p FROM Patient p WHERE p.user = :user",
                     Patient.class
             );
-            query.setParameter("userId", userId);
+            query.setParameter("user", user);
             List<Patient> result = query.getResultList();
             if (result.isEmpty()) {
                 return Optional.empty();
