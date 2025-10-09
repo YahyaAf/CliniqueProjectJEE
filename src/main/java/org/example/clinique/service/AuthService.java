@@ -1,5 +1,11 @@
 package org.example.clinique.service;
 
+import org.example.clinique.dto.DoctorDTO;
+import org.example.clinique.dto.PatientDTO;
+import org.example.clinique.dto.StaffDTO;
+import org.example.clinique.mapper.DoctorMapper;
+import org.example.clinique.mapper.PatientMapper;
+import org.example.clinique.mapper.StaffMapper;
 import org.example.clinique.model.Doctor;
 import org.example.clinique.model.Patient;
 import org.example.clinique.model.Staff;
@@ -30,47 +36,51 @@ public class AuthService {
         this.staffRepository = staffRepository;
     }
 
-    public void registerPatient(User user, Patient patient) {
+    public void registerPatient(PatientDTO dto) {
         try {
-            user.setRole(Role.PATIENT);
-            user.setPassword(hashPassword(user.getPassword()));
+            String hashedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
+            User user = PatientMapper.toUserEntity(dto, hashedPassword);
             userRepository.saveAndFlush(user);
-            patient.setUser(user);
+
+            Patient patient = PatientMapper.toPatientEntity(dto, user);
             patientRepository.save(patient);
 
-            System.out.println("Patient added successfully!");
+            System.out.println("Patient registered successfully!");
         } catch (Exception e) {
-            System.out.println("Error in creating patient: " + e.getMessage());
+            System.out.println("Error creating patient: " + e.getMessage());
         }
     }
 
 
-    public void registerDoctor(User user, Doctor doctor){
-        try{
-            user.setRole(Role.DOCTOR);
-            user.setPassword(hashPassword(user.getPassword()));
+    public void registerDoctor(DoctorDTO doctorDTO) {
+        try {
+            String hashedPassword = BCrypt.hashpw(doctorDTO.getPassword(), BCrypt.gensalt());
+
+            User user = DoctorMapper.toUserEntity(doctorDTO, hashedPassword);
             userRepository.saveAndFlush(user);
 
-            doctor.setUser(user);
-            doctor.setSpecialiteId(null);
+            Doctor doctor = DoctorMapper.toDoctorEntity(doctorDTO, user);
             doctorRepository.save(doctor);
-            System.out.println("Doctor added Success!");
-        }catch(Exception e){
-            System.out.println("Error in create doctor "+e.getMessage());
+
+            System.out.println("Doctor registered successfully!");
+        } catch (Exception e) {
+            System.out.println("Error creating doctor: " + e.getMessage());
         }
     }
 
-    public void registerStaff(User user, Staff staff){
-        try{
-            user.setRole(Role.STAFF);
-            user.setPassword(hashPassword(user.getPassword()));
+    public void registerStaff(StaffDTO staffDTO) {
+        try {
+            String hashedPassword = BCrypt.hashpw(staffDTO.getPassword(), BCrypt.gensalt());
+
+            User user = StaffMapper.toUserEntity(staffDTO, hashedPassword);
             userRepository.saveAndFlush(user);
 
-            staff.setUser(user);
+            Staff staff = StaffMapper.toStaffEntity(staffDTO, user);
             staffRepository.save(staff);
-            System.out.println("Staff added Success!");
-        }catch(Exception e){
-            System.out.println("Error in create staff "+e.getMessage());
+
+            System.out.println("Staff registered successfully!");
+        } catch (Exception e) {
+            System.out.println("Error creating staff: " + e.getMessage());
         }
     }
 
