@@ -1,4 +1,4 @@
-package org.example.clinique.servlet;
+package org.example.clinique.servlet.test;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
