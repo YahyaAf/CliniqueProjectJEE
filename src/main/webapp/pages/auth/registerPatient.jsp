@@ -12,7 +12,7 @@
 </head>
 <body>
 <h2>Register a new patient</h2>
-<form action="register-patient" method="post">
+<form action="${pageContext.request.contextPath}/register-patient" method="post">
     Full Name: <input type="text" name="fullName" required><br>
     Email: <input type="email" name="email" required><br>
     Password: <input type="password" name="password" required><br>

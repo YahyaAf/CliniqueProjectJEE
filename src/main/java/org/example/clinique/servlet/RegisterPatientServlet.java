@@ -15,7 +15,7 @@ import org.example.clinique.service.AuthService;
 import java.io.IOException;
 import java.time.LocalDate;
 
-@WebServlet("/pages/auth/register-patient")
+@WebServlet("/register-patient")
 public class RegisterPatientServlet extends HttpServlet {
     private AuthService authService;
 
