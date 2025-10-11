@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!-- Navigation -->
 <nav class="relative z-50 glass-effect">
     <div class="container mx-auto px-6 py-4">
@@ -21,14 +22,32 @@
                 <a href="${pageContext.request.contextPath}/#contact" class="hover:text-teal-400 transition-colors">Contact</a>
             </div>
 
-            <div class="flex items-center space-x-4">
-                <a href="${pageContext.request.contextPath}/login" class="px-6 py-2 rounded-full border border-teal-500/50 hover:bg-teal-600 hover:text-white transition-all duration-300">
-                    Connexion
-                </a>
-                <a href="${pageContext.request.contextPath}/pages/auth/registerPatient.jsp" class="px-6 py-2 rounded-full bg-gradient-to-r from-teal-600 to-teal-700 hover:shadow-lg hover:shadow-teal-600/30 transition-all duration-300">
-                    S'inscrire
-                </a>
-            </div>
+            <c:choose>
+                <c:when test="${not empty sessionScope.currentUser}">
+                    <div class="flex items-center space-x-4">
+            <span class="text-gray-700 font-medium">
+                Welcome, ${sessionScope.currentUser.fullName} 
+            </span>
+                        <a href="${pageContext.request.contextPath}/logout"
+                           class="px-6 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all duration-300">
+                            Logout
+                        </a>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="flex items-center space-x-4">
+                        <a href="${pageContext.request.contextPath}/login"
+                           class="px-6 py-2 rounded-full border border-teal-500/50 hover:bg-teal-600 hover:text-white transition-all duration-300">
+                            Connexion
+                        </a>
+                        <a href="${pageContext.request.contextPath}/pages/auth/registerPatient.jsp"
+                           class="px-6 py-2 rounded-full bg-gradient-to-r from-teal-600 to-teal-700 hover:shadow-lg hover:shadow-teal-600/30 transition-all duration-300">
+                            S'inscrire
+                        </a>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+
         </div>
     </div>
 </nav>

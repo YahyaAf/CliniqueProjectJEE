@@ -55,7 +55,7 @@ public class LoginServlet extends HttpServlet {
             req.getRequestDispatcher("/pages/auth/login.jsp").forward(req,resp);
             return;
         }
-
+        req.getSession().setAttribute("currentUser", authService.getCurrentUser());
         resp.sendRedirect(req.getContextPath() + "/pages/auth/success.jsp");
 
     }
