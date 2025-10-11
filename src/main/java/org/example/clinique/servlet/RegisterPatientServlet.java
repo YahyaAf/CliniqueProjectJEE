@@ -59,7 +59,7 @@ public class RegisterPatientServlet extends HttpServlet {
         }
 
         authService.registerPatient(dto);
-        resp.sendRedirect(req.getContextPath() + "/pages/auth/successRegisterPatient.jsp");
+        resp.sendRedirect(req.getContextPath() + "/pages/auth/success.jsp");
     }
 }
 
