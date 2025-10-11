@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clinique Digitale - Votre Santé, Notre Priorité</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <jsp:include page="/pages/components/styles.jsp" />
     <style>
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -61,37 +62,7 @@
 <!-- Animated Background -->
 <div class="fixed inset-0 mesh-gradient opacity-30 pointer-events-none"></div>
 
-<!-- Navigation -->
-<nav class="relative z-50 glass-effect">
-    <div class="container mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-12 h-12 bg-gradient-to-br from-teal-600 to-teal-800 rounded-xl flex items-center justify-center glow-pulse">
-                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                    </svg>
-                </div>
-                <span class="text-2xl font-bold bg-gradient-to-r from-teal-400 to-teal-500 bg-clip-text text-transparent">MediCare+</span>
-            </div>
-
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="#" class="hover:text-teal-400 transition-colors">Accueil</a>
-                <a href="#services" class="hover:text-teal-400 transition-colors">Services</a>
-                <a href="#doctors" class="hover:text-teal-400 transition-colors">Nos Docteurs</a>
-                <a href="#contact" class="hover:text-teal-400 transition-colors">Contact</a>
-            </div>
-
-            <div class="flex items-center space-x-4">
-                <button class="px-6 py-2 rounded-full border border-teal-500/50 hover:bg-teal-600 hover:text-white transition-all duration-300">
-                    Connexion
-                </button>
-                <button class="px-6 py-2 rounded-full bg-gradient-to-r from-teal-600 to-teal-700 hover:shadow-lg hover:shadow-teal-600/30 transition-all duration-300">
-                    S'inscrire
-                </button>
-            </div>
-        </div>
-    </div>
-</nav>
+<jsp:include page="/pages/components/navbar.jsp" />
 
 <!-- Hero Section -->
 <section class="relative container mx-auto px-6 pt-20 pb-32">
@@ -253,11 +224,7 @@
 </section>
 
 <!-- Footer -->
-<footer class="relative container mx-auto px-6 py-12 border-t border-gray-800">
-    <div class="text-center text-gray-400">
-        <p>© 2025 MediCare+ - Votre santé, notre innovation</p>
-    </div>
-</footer>
+<jsp:include page="/pages/components/footer.jsp" />
 
 </body>
 </html>
