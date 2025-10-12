@@ -1,101 +1,144 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Register Staff</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Staff - MediCare+</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            width: 420px;
-            margin: 80px auto;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 30px;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 25px;
-            color: #333;
-        }
-        label {
-            display: block;
-            margin-top: 15px;
-            color: #555;
-        }
-        input {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        button {
-            margin-top: 20px;
-            width: 100%;
-            padding: 10px;
-            background-color: #0e7490;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.3s ease;
-        }
-        button:hover {
-            background-color: #0f9bbd;
-        }
-        .error-box {
-            background-color: #fee2e2;
-            border: 1px solid #f87171;
-            color: #991b1b;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
     </style>
 </head>
-<body>
+<body class="gradient-bg min-h-screen">
 
-<div class="container">
-    <h2>Register New Staff</h2>
+<!-- Définir la page active pour la sidebar -->
+<c:set var="currentPage" value="settings" scope="request"/>
 
-    <!-- Display validation errors -->
-    <c:if test="${not empty errors}">
-        <div class="error-box">
-            <ul>
-                <c:forEach var="error" items="${errors}">
-                    <li>${error}</li>
-                </c:forEach>
-            </ul>
-        </div>
-    </c:if>
+<!-- Include Sidebar Component -->
+<jsp:include page="/dashboard/components/sidebar.jsp"/>
 
-    <form action="${pageContext.request.contextPath}/admin/register-staff" method="post">
-        <label for="fullName">Full Name</label>
-        <input type="text" id="fullName" name="fullName" placeholder="Enter full name" required>
+<!-- Main Content -->
+<main id="mainContent" class="p-8 ml-64">
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" placeholder="Enter email" required>
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Register New Staff</h1>
+        <p class="text-white/70">Add a new member to your medical team</p>
+    </div>
 
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter password" required>
+    <!-- Registration Form -->
+    <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-8 max-w-5xl">
 
-        <label for="position">Position</label>
-        <input type="text" id="position" name="position" placeholder="Enter staff position" required>
+        <!-- Display validation errors -->
+        <c:if test="${not empty errors}">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-circle text-red-500 text-lg mt-0.5"></i>
+                    <div>
+                        <p class="font-semibold text-red-800 mb-2">Validation Errors:</p>
+                        <ul class="space-y-1 text-sm text-red-700">
+                            <c:forEach var="error" items="${errors}">
+                                <li>• ${error}</li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </c:if>
 
-        <button type="submit">Register Staff</button>
-    </form>
-</div>
+        <form action="${pageContext.request.contextPath}/admin/register-staff" method="post">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Full Name -->
+                <div>
+                    <label for="fullName" class="block text-sm font-medium text-white/90 mb-2">
+                        Full Name
+                    </label>
+                    <input type="text"
+                           id="fullName"
+                           name="fullName"
+                           placeholder="Enter full name"
+                           required
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-white/90 mb-2">
+                        Email
+                    </label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           placeholder="Enter email"
+                           required
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-white/90 mb-2">
+                        Password
+                    </label>
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           placeholder="Enter password"
+                           required
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                </div>
+
+                <!-- Position -->
+                <div>
+                    <label for="position" class="block text-sm font-medium text-white/90 mb-2">
+                        Position
+                    </label>
+                    <input type="text"
+                           id="position"
+                           name="position"
+                           placeholder="Enter staff position"
+                           required
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                </div>
+
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t">
+                <a href="${pageContext.request.contextPath}/admin/staff"
+                   class="px-6 py-2.5 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition">
+                    Register Staff
+                </button>
+            </div>
+
+        </form>
+    </div>
+</main>
 
 </body>
 </html>
