@@ -24,14 +24,35 @@
 
             <c:choose>
                 <c:when test="${not empty sessionScope.currentUser}">
-                    <div class="flex items-center space-x-4">
-            <span class="text-gray-700 font-medium">
-                Welcome, ${sessionScope.currentUser.fullName} 
-            </span>
-                        <a href="${pageContext.request.contextPath}/logout"
-                           class="px-6 py-2 rounded-full bg-red-600 hover:bg-red-700 text-white transition-all duration-300">
-                            Logout
-                        </a>
+                    <div class="relative group">
+                        <button class="flex items-center space-x-3 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-teal-500/30 hover:border-teal-500/50 transition-all duration-300">
+                            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-teal-500 to-teal-600 flex items-center justify-center text-white font-semibold text-sm">
+                                    ${fn:substring(sessionScope.currentUser.fullName, 0, 1)}
+                            </div>
+                            <span class="text-sm font-medium">${sessionScope.currentUser.fullName}</span>
+                            <svg class="w-4 h-4 transition-transform group-hover:rotate-180 duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div class="absolute right-0 mt-2 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right">
+                            <div class="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-teal-500/20 overflow-hidden">
+                                <div class="px-4 py-3 border-b border-gray-200/50">
+                                    <p class="text-sm font-semibold text-gray-800">${sessionScope.currentUser.fullName}</p>
+                                    <p class="text-xs text-gray-500 mt-0.5">${sessionScope.currentUser.email}</p>
+                                </div>
+                                <div class="border-t border-gray-200/50 py-2">
+                                    <a href="${pageContext.request.contextPath}/logout"
+                                       class="flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                        </svg>
+                                        Déconnexion
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </c:when>
                 <c:otherwise>
@@ -51,3 +72,5 @@
         </div>
     </div>
 </nav>
+
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
