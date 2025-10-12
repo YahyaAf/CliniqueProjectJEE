@@ -1,9 +1,6 @@
 package org.example.clinique.service;
 
-import org.example.clinique.dto.DoctorDTO;
-import org.example.clinique.dto.PatientDTO;
-import org.example.clinique.dto.StaffDTO;
-import org.example.clinique.dto.UserResponseLoginDTO;
+import org.example.clinique.dto.*;
 import org.example.clinique.mapper.DoctorMapper;
 import org.example.clinique.mapper.PatientMapper;
 import org.example.clinique.mapper.StaffMapper;
@@ -18,7 +15,9 @@ import org.example.clinique.repository.StaffRepository;
 import org.example.clinique.repository.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class AuthService {
     private final UserRepository userRepository;
@@ -142,4 +141,22 @@ public class AuthService {
     private boolean checkPassword(String plainPassword, String hashedPassword) {
         return BCrypt.checkpw(plainPassword, hashedPassword);
     }
+
+    public List<UserListDTO> getAllUsers() {
+        try {
+            List<User> users = userRepository.findAll();
+
+            return users.stream()
+                    .map(user -> new UserListDTO(
+                            user.getFullName(),
+                            user.getEmail(),
+                            user.getRole().name()
+                    ))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            System.out.println("Error fetching users: " + e.getMessage());
+            return List.of();
+        }
+    }
+
 }

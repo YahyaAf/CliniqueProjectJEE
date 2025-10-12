@@ -49,6 +49,6 @@ public class RegisterStaffServlet extends HttpServlet {
         }
 
         authService.registerStaff(dto);
-        resp.sendRedirect(req.getContextPath()+"/dashboard/pages/registerStaff.jsp");
+        resp.sendRedirect(req.getContextPath() + "/admin/list-users");
     }
 }
