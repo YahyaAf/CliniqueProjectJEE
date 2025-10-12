@@ -3,6 +3,7 @@ package org.example.clinique.service;
 import org.example.clinique.dto.DoctorDTO;
 import org.example.clinique.dto.PatientDTO;
 import org.example.clinique.dto.StaffDTO;
+import org.example.clinique.dto.UserResponseLoginDTO;
 import org.example.clinique.mapper.DoctorMapper;
 import org.example.clinique.mapper.PatientMapper;
 import org.example.clinique.mapper.StaffMapper;
@@ -24,7 +25,7 @@ public class AuthService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final StaffRepository staffRepository;
-    private User currentUser;
+    private UserResponseLoginDTO currentUser;
 
     public AuthService(UserRepository userRepository,
                        PatientRepository patientRepository,
@@ -108,7 +109,11 @@ public class AuthService {
                 System.out.println("Password is incorrect!");
                 return false;
             }
-            this.currentUser= user;
+            this.currentUser= new UserResponseLoginDTO(
+                    user.getEmail(),
+                    user.getFullName(),
+                    user.getRole().name()
+            );
             System.out.println("User "+user.getFullName()+" is logged Success");
             return true;
         } catch (Exception e) {
@@ -126,7 +131,7 @@ public class AuthService {
         }
     }
 
-    public User getCurrentUser(){
+    public UserResponseLoginDTO getCurrentUser(){
         return this.currentUser;
     }
 
