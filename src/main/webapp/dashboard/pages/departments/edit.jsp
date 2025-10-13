@@ -1,29 +1,153 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>Modifier le département</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Department - MediCare+</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
 </head>
-<body>
-<h2>Modifier le département</h2>
+<body class="gradient-bg min-h-screen">
 
-<form action="${pageContext.request.contextPath}/admin/departments" method="post">
-    <input type="hidden" name="action" value="update"/>
-    <input type="hidden" name="id" value="${department.id}"/>
+<!-- Définir la page active pour la sidebar -->
+<c:set var="currentPage" value="settings" scope="request"/>
 
-    <label>Nom :</label><br>
-    <input type="text" name="name" value="${department.name}" required/><br><br>
+<!-- Include Sidebar Component -->
+<jsp:include page="/dashboard/components/sidebar.jsp"/>
 
-    <label>Description :</label><br>
-    <textarea name="description" rows="4" cols="40">${department.description}</textarea><br><br>
+<!-- Main Content -->
+<main id="mainContent" class="p-8 ml-64">
 
-    <label>Actif :</label>
-    <input type="checkbox" name="isActive" <c:if test="${department.isActive}">checked</c:if> /><br><br>
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Edit Department</h1>
+        <p class="text-white/70">Update department information</p>
+    </div>
 
-    <button type="submit">Mettre à jour</button>
-    <a href="${pageContext.request.contextPath}/admin/departments">Annuler</a>
-</form>
+    <!-- Edit Department Form -->
+    <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-8 max-w-5xl">
+
+        <!-- Display validation errors -->
+        <c:if test="${not empty errors}">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-circle text-red-500 text-lg mt-0.5"></i>
+                    <div>
+                        <p class="font-semibold text-red-800 mb-2">Validation Errors:</p>
+                        <ul class="space-y-1 text-sm text-red-700">
+                            <c:forEach var="error" items="${errors}">
+                                <li>• ${error}</li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+
+        <form action="${pageContext.request.contextPath}/admin/departments" method="post">
+            <input type="hidden" name="action" value="update"/>
+            <input type="hidden" name="id" value="${department.id}"/>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-white/90 mb-2">
+                        Department Name
+                    </label>
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           value="${department.name}"
+                           placeholder="Ex: Cardiology, Pediatrics..."
+                           required
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                </div>
+
+                <!-- Status Toggle -->
+                <div>
+                    <label class="block text-sm font-medium text-white/90 mb-2">
+                        Status
+                    </label>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox"
+                               name="isActive"
+                               class="sr-only peer"
+                               <c:if test="${department.isActive}">checked</c:if>>
+                        <div class="w-14 h-7 bg-white/10 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-400/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-green-500"></div>
+                        <span class="ms-3 text-sm font-medium text-white/90">
+                            <c:choose>
+                                <c:when test="${department.isActive}">Active</c:when>
+                                <c:otherwise>Inactive</c:otherwise>
+                            </c:choose>
+                        </span>
+                    </label>
+                    <p class="text-xs text-white/50 mt-2">Toggle to activate or deactivate this department</p>
+                </div>
+
+                <!-- Description - Full Width -->
+                <div class="md:col-span-2">
+                    <label for="description" class="block text-sm font-medium text-white/90 mb-2">
+                        Description
+                    </label>
+                    <textarea id="description"
+                              name="description"
+                              rows="4"
+                              placeholder="Enter department description..."
+                              class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50 resize-none">${department.description}</textarea>
+                </div>
+
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-white/10">
+                <a href="${pageContext.request.contextPath}/admin/departments"
+                   class="px-6 py-2.5 border border-white/20 text-white/90 rounded-lg hover:bg-white/5 font-medium transition">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition shadow-lg shadow-indigo-600/30">
+                    Update Department
+                </button>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+<script>
+    // Toggle text change
+    const checkbox = document.querySelector('input[name="isActive"]');
+    const statusText = document.querySelector('label[for] + span');
+
+    if (checkbox && statusText) {
+        checkbox.addEventListener('change', function() {
+            statusText.textContent = this.checked ? 'Active' : 'Inactive';
+        });
+    }
+</script>
+
 </body>
 </html>

@@ -1,33 +1,134 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Specialty - MediCare+</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
 
-<div class="container">
-    <h2>Ajouter une spécialité</h2>
+<!-- Définir la page active pour la sidebar -->
+<c:set var="currentPage" value="settings" scope="request"/>
 
-    <form action="${pageContext.request.contextPath}/admin/specialites" method="post">
-        <input type="hidden" name="action" value="add">
+<!-- Include Sidebar Component -->
+<jsp:include page="/dashboard/components/sidebar.jsp"/>
 
-        <div class="form-group">
-            <label>Nom :</label>
-            <input type="text" name="name" class="form-control" required />
-        </div>
+<!-- Main Content -->
+<main id="mainContent" class="p-8 ml-64">
 
-        <div class="form-group">
-            <label>Description :</label>
-            <textarea name="description" class="form-control"></textarea>
-        </div>
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Add New Specialty</h1>
+        <p class="text-white/70">Create a new medical specialty</p>
+    </div>
 
-        <div class="form-group">
-            <label>Département :</label>
-            <select name="departmentId" class="form-control" required>
-                <option value="">-- Sélectionner un département --</option>
-                <c:forEach var="dept" items="${departments}">
-                    <option value="${dept.id}">${dept.name}</option>
-                </c:forEach>
-            </select>
-        </div>
+    <!-- Add Specialty Form -->
+    <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-8 max-w-5xl">
 
-        <button type="submit" class="btn btn-success">💾 Enregistrer</button>
-        <a href="${pageContext.request.contextPath}/admin/specialites" class="btn btn-secondary">↩️ Annuler</a>
-    </form>
-</div>
+        <!-- Display validation errors -->
+        <c:if test="${not empty errors}">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-circle text-red-500 text-lg mt-0.5"></i>
+                    <div>
+                        <p class="font-semibold text-red-800 mb-2">Validation Errors:</p>
+                        <ul class="space-y-1 text-sm text-red-700">
+                            <c:forEach var="error" items="${errors}">
+                                <li>• ${error}</li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+
+        <form action="${pageContext.request.contextPath}/admin/specialites" method="post">
+            <input type="hidden" name="action" value="add">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-white/90 mb-2">
+                        Specialty Name
+                    </label>
+                    <input type="text"
+                           id="name"
+                           name="name"
+                           placeholder="Ex: Cardiology, Neurology..."
+                           required
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                </div>
+
+                <!-- Department -->
+                <div>
+                    <label for="departmentId" class="block text-sm font-medium text-white/90 mb-2">
+                        Department
+                    </label>
+                    <select id="departmentId"
+                            name="departmentId"
+                            required
+                            class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white">
+                        <option value="" class="bg-slate-800">-- Select a department --</option>
+                        <c:forEach var="dept" items="${departments}">
+                            <option value="${dept.id}" class="bg-slate-800">${dept.name}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+
+                <!-- Description - Full Width -->
+                <div class="md:col-span-2">
+                    <label for="description" class="block text-sm font-medium text-white/90 mb-2">
+                        Description
+                    </label>
+                    <textarea id="description"
+                              name="description"
+                              rows="4"
+                              placeholder="Enter specialty description..."
+                              class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50 resize-none"></textarea>
+                </div>
+
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-white/10">
+                <a href="${pageContext.request.contextPath}/admin/specialites"
+                   class="px-6 py-2.5 border border-white/20 text-white/90 rounded-lg hover:bg-white/5 font-medium transition">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition shadow-lg shadow-indigo-600/30">
+                    Add Specialty
+                </button>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+</body>
+</html>
