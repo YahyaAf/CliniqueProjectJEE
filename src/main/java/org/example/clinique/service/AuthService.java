@@ -173,4 +173,11 @@ public class AuthService {
                 .collect(Collectors.toList());
     }
 
+    public List<DoctorResponseDTO> getAllDoctors(){
+        return doctorRepository.findAll()
+                .stream()
+                .map(DoctorMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
 }

@@ -1,6 +1,7 @@
 package org.example.clinique.mapper;
 
 import org.example.clinique.dto.DoctorRegisterRequestDTO;
+import org.example.clinique.dto.DoctorResponseDTO;
 import org.example.clinique.model.Doctor;
 import org.example.clinique.model.Specialite;
 import org.example.clinique.model.User;
@@ -24,5 +25,27 @@ public class DoctorMapper {
         doctor.setUser(user);
         doctor.setSpecialite(specialite);
         return doctor;
+    }
+
+    public static DoctorResponseDTO toResponseDTO(Doctor doctor){
+        String specialiteName = null;
+        String departmentName = null;
+
+        Specialite specialite = doctor.getSpecialite();
+        if(specialite != null){
+            specialiteName = specialite.getName();
+            if(specialite.getDepartment() != null){
+                departmentName = specialite.getDepartment().getName();
+            }
+        }
+
+        return new DoctorResponseDTO(
+                doctor.getId(),
+                doctor.getUser().getFullName(),
+                doctor.getUser().getEmail(),
+                doctor.getMatricule(),
+                specialiteName,
+                departmentName
+        );
     }
 }

@@ -15,8 +15,8 @@ public class Staff {
     @Column(nullable = false)
     private String position;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Staff(){}

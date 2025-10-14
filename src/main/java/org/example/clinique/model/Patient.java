@@ -32,8 +32,8 @@ public class Patient {
     @Column(name = "insurance_number")
     private String insuranceNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
     // Constructors
