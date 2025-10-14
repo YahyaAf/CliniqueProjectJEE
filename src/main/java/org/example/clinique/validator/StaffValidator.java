@@ -18,8 +18,8 @@ public class StaffValidator {
             errors.add("Invalid email format.");
         }
 
-        if(dto.getPassword() == null || dto.getPassword().length()<6){
-            errors.add("Password must be at least 6 characters long");
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty() && dto.getPassword().length() < 6) {
+            errors.add("Password must be at least 6 characters long.");
         }
 
         if(dto.getPosition() == null || dto.getPosition().trim().isEmpty()){
