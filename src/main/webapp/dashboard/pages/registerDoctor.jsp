@@ -57,6 +57,7 @@
         </div>
 
         <button type="submit">Register Doctor</button>
+        <a href="${pageContext.request.contextPath}/admin/doctors">annuler</a>
     </form>
 </div>
 </body>

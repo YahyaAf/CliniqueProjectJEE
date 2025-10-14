@@ -35,7 +35,7 @@
                 <td>${doc.departmentName}</td>
                 <td>
                     <!-- Edit button -->
-                    <a href="${pageContext.request.contextPath}/admin/edit-doctor?id=${doc.id}"
+                    <a href="${pageContext.request.contextPath}/admin/update-doctor?id=${doc.id}"
                        title="Edit Doctor">
                         <i class="fas fa-edit"></i>
                     </a>
@@ -54,6 +54,7 @@
 
     <br>
     <a href="${pageContext.request.contextPath}/admin/register-doctor">Add New Doctor</a>
+
 </div>
 </body>
 </html>

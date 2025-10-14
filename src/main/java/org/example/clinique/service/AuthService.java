@@ -223,6 +223,11 @@ public class AuthService {
         });
     }
 
+    public Optional<DoctorResponseDTO> getDoctorById(UUID id) {
+        return doctorRepository.findById(id)
+                .map(DoctorMapper::toResponseDTO);
+    }
+
 
 
 }
