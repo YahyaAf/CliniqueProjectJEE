@@ -1,23 +1,20 @@
 package org.example.clinique.dto;
 
-public class DoctorDTO {
+public class StaffRegisterRequestDTO {
     private String fullName;
     private String email;
     private String password;
-    private String matricule;
-    private String specialiteId;
+    private String position;
 
-    public DoctorDTO() {}
+    public StaffRegisterRequestDTO() {}
 
-    public DoctorDTO(String fullName, String email, String password, String matricule, String specialiteId) {
+    public StaffRegisterRequestDTO(String fullName, String email, String password, String position) {
         this.fullName = fullName;
         this.email = email;
         this.password = password;
-        this.matricule = matricule;
-        this.specialiteId = specialiteId;
+        this.position = position;
     }
 
-    // Getters & Setters
     public String getFullName() {
         return fullName;
     }
@@ -42,19 +39,11 @@ public class DoctorDTO {
         this.password = password;
     }
 
-    public String getMatricule() {
-        return matricule;
+    public String getPosition() {
+        return position;
     }
 
-    public void setMatricule(String matricule) {
-        this.matricule = matricule;
-    }
-
-    public String getSpecialiteId() {
-        return specialiteId;
-    }
-
-    public void setSpecialiteId(String specialiteId) {
-        this.specialiteId = specialiteId;
+    public void setPosition(String position) {
+        this.position = position;
     }
 }

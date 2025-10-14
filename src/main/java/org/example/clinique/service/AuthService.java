@@ -3,16 +3,11 @@ package org.example.clinique.service;
 import org.example.clinique.dto.*;
 import org.example.clinique.mapper.DoctorMapper;
 import org.example.clinique.mapper.PatientMapper;
+import org.example.clinique.mapper.SpecialiteMapper;
 import org.example.clinique.mapper.StaffMapper;
-import org.example.clinique.model.Doctor;
-import org.example.clinique.model.Patient;
-import org.example.clinique.model.Staff;
-import org.example.clinique.model.User;
+import org.example.clinique.model.*;
 import org.example.clinique.model.enums.Role;
-import org.example.clinique.repository.DoctorRepository;
-import org.example.clinique.repository.PatientRepository;
-import org.example.clinique.repository.StaffRepository;
-import org.example.clinique.repository.UserRepository;
+import org.example.clinique.repository.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
@@ -24,19 +19,23 @@ public class AuthService {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final StaffRepository staffRepository;
+    private final SpecialiteRepository specialiteRepository;
+
     private UserResponseLoginDTO currentUser;
 
     public AuthService(UserRepository userRepository,
                        PatientRepository patientRepository,
                        DoctorRepository doctorRepository,
-                        StaffRepository staffRepository){
+                       StaffRepository staffRepository,
+                       SpecialiteRepository specialiteRepository) {
         this.userRepository = userRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.staffRepository = staffRepository;
+        this.specialiteRepository = specialiteRepository;
     }
 
-    public void registerPatient(PatientDTO dto) {
+    public void registerPatient(PatientRegisterRequestDTO dto) {
         try {
             String hashedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
             User user = PatientMapper.toUserEntity(dto, hashedPassword);
@@ -52,14 +51,21 @@ public class AuthService {
     }
 
 
-    public void registerDoctor(DoctorDTO doctorDTO) {
+    public void registerDoctor(DoctorRegisterRequestDTO doctorRegisterRequestDTO) {
         try {
-            String hashedPassword = BCrypt.hashpw(doctorDTO.getPassword(), BCrypt.gensalt());
+            String hashedPassword = BCrypt.hashpw(doctorRegisterRequestDTO.getPassword(), BCrypt.gensalt());
 
-            User user = DoctorMapper.toUserEntity(doctorDTO, hashedPassword);
+            User user = DoctorMapper.toUserEntity(doctorRegisterRequestDTO, hashedPassword);
             userRepository.saveAndFlush(user);
 
-            Doctor doctor = DoctorMapper.toDoctorEntity(doctorDTO, user);
+            Specialite specialite = null;
+            if (doctorRegisterRequestDTO.getSpecialiteId() != null) {
+                specialite = specialiteRepository.findById(doctorRegisterRequestDTO.getSpecialiteId())
+                        .orElseThrow(() -> new RuntimeException("Spécialité introuvable"));
+            }
+
+            Doctor doctor = DoctorMapper.toDoctorEntity(doctorRegisterRequestDTO, user, specialite);
+
             doctorRepository.save(doctor);
 
             System.out.println("Doctor registered successfully!");
@@ -68,14 +74,15 @@ public class AuthService {
         }
     }
 
-    public void registerStaff(StaffDTO staffDTO) {
-        try {
-            String hashedPassword = BCrypt.hashpw(staffDTO.getPassword(), BCrypt.gensalt());
 
-            User user = StaffMapper.toUserEntity(staffDTO, hashedPassword);
+    public void registerStaff(StaffRegisterRequestDTO staffRegisterRequestDTO) {
+        try {
+            String hashedPassword = BCrypt.hashpw(staffRegisterRequestDTO.getPassword(), BCrypt.gensalt());
+
+            User user = StaffMapper.toUserEntity(staffRegisterRequestDTO, hashedPassword);
             userRepository.saveAndFlush(user);
 
-            Staff staff = StaffMapper.toStaffEntity(staffDTO, user);
+            Staff staff = StaffMapper.toStaffEntity(staffRegisterRequestDTO, user);
             staffRepository.save(staff);
 
             System.out.println("Staff registered successfully!");
@@ -157,6 +164,13 @@ public class AuthService {
             System.out.println("Error fetching users: " + e.getMessage());
             return List.of();
         }
+    }
+
+    public List<SpecialiteResponseDTO> getAllSpecialites() {
+        return specialiteRepository.findAll()
+                .stream()
+                .map(SpecialiteMapper::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
 }

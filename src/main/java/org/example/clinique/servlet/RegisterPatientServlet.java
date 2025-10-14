@@ -3,13 +3,10 @@ package org.example.clinique.servlet;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import org.example.clinique.dto.PatientDTO;
+import org.example.clinique.dto.PatientRegisterRequestDTO;
 import org.example.clinique.model.enums.BloodType;
 import org.example.clinique.model.enums.Gender;
-import org.example.clinique.repository.implementation.DoctorRepositoryImpl;
-import org.example.clinique.repository.implementation.PatientRepositoryImpl;
-import org.example.clinique.repository.implementation.StaffRepositoryImpl;
-import org.example.clinique.repository.implementation.UserRepositoryImpl;
+import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AuthService;
 import org.example.clinique.validator.PatientValidator;
 
@@ -28,14 +25,15 @@ public class RegisterPatientServlet extends HttpServlet {
                 new UserRepositoryImpl(),
                 new PatientRepositoryImpl(),
                 new DoctorRepositoryImpl(),
-                new StaffRepositoryImpl()
+                new StaffRepositoryImpl(),
+                new SpecialiteRepositoryImpl()
         );
         this.validator = new PatientValidator();
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        PatientDTO dto = new PatientDTO();
+        PatientRegisterRequestDTO dto = new PatientRegisterRequestDTO();
         dto.setFullName(req.getParameter("fullName"));
         dto.setEmail(req.getParameter("email"));
         dto.setPassword(req.getParameter("password"));

@@ -6,10 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.clinique.dto.LoginDTO;
-import org.example.clinique.repository.implementation.DoctorRepositoryImpl;
-import org.example.clinique.repository.implementation.PatientRepositoryImpl;
-import org.example.clinique.repository.implementation.StaffRepositoryImpl;
-import org.example.clinique.repository.implementation.UserRepositoryImpl;
+import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AuthService;
 import org.example.clinique.validator.LoginValidator;
 
@@ -26,7 +23,8 @@ public class LoginServlet extends HttpServlet {
                 new UserRepositoryImpl(),
                 new PatientRepositoryImpl(),
                 new DoctorRepositoryImpl(),
-                new StaffRepositoryImpl()
+                new StaffRepositoryImpl(),
+                new SpecialiteRepositoryImpl()
         );
         this.validator = new LoginValidator();
     }

@@ -1,18 +1,7 @@
 package org.example.clinique.util;
 
-import org.example.clinique.dto.DoctorDTO;
-import org.example.clinique.dto.PatientDTO;
-import org.example.clinique.dto.StaffDTO;
-import org.example.clinique.model.Doctor;
-import org.example.clinique.model.Patient;
-import org.example.clinique.model.Staff;
-import org.example.clinique.model.User;
-import org.example.clinique.model.enums.BloodType;
-import org.example.clinique.model.enums.Gender;
-import org.example.clinique.repository.implementation.DoctorRepositoryImpl;
-import org.example.clinique.repository.implementation.PatientRepositoryImpl;
-import org.example.clinique.repository.implementation.StaffRepositoryImpl;
-import org.example.clinique.repository.implementation.UserRepositoryImpl;
+import org.example.clinique.dto.DoctorRegisterRequestDTO;
+import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AuthService;
 
 public class TestAuth {
@@ -21,7 +10,8 @@ public class TestAuth {
                 new UserRepositoryImpl(),
                 new PatientRepositoryImpl(),
                 new DoctorRepositoryImpl(),
-                new StaffRepositoryImpl()
+                new StaffRepositoryImpl(),
+                new SpecialiteRepositoryImpl()
         );
 
 //        PatientDTO patientDTO = new PatientDTO();
@@ -42,13 +32,13 @@ public class TestAuth {
 //        staffDTO.setPosition("testeur");
 //        authService.registerStaff(staffDTO);
 
-        DoctorDTO doctorDTO = new DoctorDTO();
-        doctorDTO.setFullName("said gahtani");
-        doctorDTO.setEmail("said@gmail.com");
-        doctorDTO.setPassword("said123");
-        doctorDTO.setMatricule("CN5555F447");
-        doctorDTO.setSpecialiteId(null);
-        authService.registerDoctor(doctorDTO);
+        DoctorRegisterRequestDTO doctorRegisterRequestDTO = new DoctorRegisterRequestDTO();
+        doctorRegisterRequestDTO.setFullName("said gahtani");
+        doctorRegisterRequestDTO.setEmail("said@gmail.com");
+        doctorRegisterRequestDTO.setPassword("said123");
+        doctorRegisterRequestDTO.setMatricule("CN5555F447");
+        doctorRegisterRequestDTO.setSpecialiteId(null);
+        authService.registerDoctor(doctorRegisterRequestDTO);
 
 //        authService.registerAdmin(user);
 

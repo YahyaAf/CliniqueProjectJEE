@@ -5,7 +5,7 @@ import org.example.clinique.model.enums.Gender;
 
 import java.time.LocalDate;
 
-public class PatientDTO {
+public class PatientRegisterRequestDTO {
     private String fullName;
     private String email;
     private String password;

@@ -1,13 +1,13 @@
 package org.example.clinique.validator;
 
-import org.example.clinique.dto.StaffDTO;
+import org.example.clinique.dto.StaffRegisterRequestDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class StaffValidator {
-    public List<String> validate(StaffDTO dto){
+    public List<String> validate(StaffRegisterRequestDTO dto){
         List<String> errors = new ArrayList<>();
 
         if(dto.getFullName() == null || dto.getFullName().trim().isEmpty()){

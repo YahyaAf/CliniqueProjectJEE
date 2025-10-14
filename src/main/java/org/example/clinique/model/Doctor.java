@@ -14,12 +14,13 @@ public class Doctor {
     @Column(name = "matricule", nullable = false, unique = true)
     private String matricule;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "specialite_id")
-    private UUID specialiteId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "specialite_id")
+    private Specialite specialite;
 
     public Doctor() {}
 
@@ -47,11 +48,11 @@ public class Doctor {
         this.user = user;
     }
 
-    public UUID getSpecialiteId() {
-        return specialiteId;
+    public Specialite getSpecialite() {
+        return specialite;
     }
 
-    public void setSpecialiteId(UUID specialiteId) {
-        this.specialiteId = specialiteId;
+    public void setSpecialite(Specialite specialite) {
+        this.specialite = specialite;
     }
 }

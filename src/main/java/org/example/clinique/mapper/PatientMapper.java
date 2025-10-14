@@ -1,13 +1,13 @@
 package org.example.clinique.mapper;
 
-import org.example.clinique.dto.PatientDTO;
+import org.example.clinique.dto.PatientRegisterRequestDTO;
 import org.example.clinique.model.Patient;
 import org.example.clinique.model.User;
 import org.example.clinique.model.enums.Role;
 
 public class PatientMapper {
 
-    public static User toUserEntity(PatientDTO dto, String hashedPassword) {
+    public static User toUserEntity(PatientRegisterRequestDTO dto, String hashedPassword) {
         User user = new User();
         user.setFullName(dto.getFullName());
         user.setEmail(dto.getEmail());
@@ -16,7 +16,7 @@ public class PatientMapper {
         return user;
     }
 
-    public static Patient toPatientEntity(PatientDTO dto, User user) {
+    public static Patient toPatientEntity(PatientRegisterRequestDTO dto, User user) {
         Patient patient = new Patient();
         patient.setCin(dto.getCin());
         patient.setDateOfBirth(dto.getDateOfBirth());

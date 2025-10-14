@@ -1,15 +1,14 @@
 package org.example.clinique.mapper;
 
-import org.example.clinique.dto.DoctorDTO;
+import org.example.clinique.dto.DoctorRegisterRequestDTO;
 import org.example.clinique.model.Doctor;
+import org.example.clinique.model.Specialite;
 import org.example.clinique.model.User;
 import org.example.clinique.model.enums.Role;
 
-import java.util.UUID;
-
 public class DoctorMapper {
 
-    public static User toUserEntity(DoctorDTO dto, String hashedPassword) {
+    public static User toUserEntity(DoctorRegisterRequestDTO dto, String hashedPassword) {
         User user = new User();
         user.setFullName(dto.getFullName());
         user.setEmail(dto.getEmail());
@@ -19,17 +18,11 @@ public class DoctorMapper {
         return user;
     }
 
-    public static Doctor toDoctorEntity(DoctorDTO dto, User user) {
+    public static Doctor toDoctorEntity(DoctorRegisterRequestDTO dto, User user, Specialite specialite) {
         Doctor doctor = new Doctor();
         doctor.setMatricule(dto.getMatricule());
         doctor.setUser(user);
-
-        if (dto.getSpecialiteId() != null && !dto.getSpecialiteId().isEmpty()) {
-            doctor.setSpecialiteId(UUID.fromString(dto.getSpecialiteId()));
-        } else {
-            doctor.setSpecialiteId(null);
-        }
-
+        doctor.setSpecialite(specialite);
         return doctor;
     }
 }

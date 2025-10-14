@@ -5,16 +5,12 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.clinique.dto.StaffDTO;
-import org.example.clinique.repository.implementation.DoctorRepositoryImpl;
-import org.example.clinique.repository.implementation.PatientRepositoryImpl;
-import org.example.clinique.repository.implementation.StaffRepositoryImpl;
-import org.example.clinique.repository.implementation.UserRepositoryImpl;
+import org.example.clinique.dto.StaffRegisterRequestDTO;
+import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AuthService;
 import org.example.clinique.validator.StaffValidator;
 
 import java.io.IOException;
-import java.rmi.ServerException;
 import java.util.List;
 
 @WebServlet("/admin/register-staff")
@@ -27,13 +23,14 @@ public class RegisterStaffServlet extends HttpServlet {
                 new UserRepositoryImpl(),
                 new PatientRepositoryImpl(),
                 new DoctorRepositoryImpl(),
-                new StaffRepositoryImpl()
+                new StaffRepositoryImpl(),
+                new SpecialiteRepositoryImpl()
         );
         this.validator = new StaffValidator();
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        StaffDTO dto = new StaffDTO(
+        StaffRegisterRequestDTO dto = new StaffRegisterRequestDTO(
                 req.getParameter("fullName"),
                 req.getParameter("email"),
                 req.getParameter("password"),

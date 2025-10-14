@@ -1,14 +1,14 @@
 package org.example.clinique.validator;
 
-import org.example.clinique.dto.PatientRegisterRequestDTO;
+import org.example.clinique.dto.DoctorRegisterRequestDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class PatientValidator {
+public class DoctorValidator {
 
-    public List<String> validate(PatientRegisterRequestDTO dto) {
+    public List<String> validate(DoctorRegisterRequestDTO dto) {
         List<String> errors = new ArrayList<>();
 
         if (dto.getFullName() == null || dto.getFullName().trim().isEmpty()) {
@@ -23,12 +23,12 @@ public class PatientValidator {
             errors.add("Password must be at least 6 characters long.");
         }
 
-        if (dto.getCin() == null || dto.getCin().length() != 8) {
-            errors.add("CIN must contain 8 characters.");
+        if (dto.getMatricule() == null || dto.getMatricule().trim().isEmpty()) {
+            errors.add("Matricule is required.");
         }
 
-        if (dto.getDateOfBirth() == null) {
-            errors.add("Date of birth is required.");
+        if (dto.getSpecialiteId() == null) {
+            errors.add("Specialité must be selected.");
         }
 
         return errors;
