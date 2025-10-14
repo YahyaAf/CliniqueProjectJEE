@@ -54,7 +54,8 @@ public class DoctorRepositoryImpl implements DoctorRepository {
         executeInTransaction(em -> {
             Doctor doctor = em.find(Doctor.class, id);
             if (doctor != null) {
-                em.remove(doctor);
+                doctor.getUser().setActive(false);
+                em.merge(doctor.getUser());
             }
         });
     }
@@ -73,6 +74,20 @@ public class DoctorRepositoryImpl implements DoctorRepository {
                 return Optional.empty();
             }
             return Optional.of(result.get(0));
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Doctor> findBySpecialiteId(UUID specialiteId) {
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            TypedQuery<Doctor> query = em.createQuery(
+                    "SELECT d FROM Doctor d WHERE d.specialite.id = :specialiteId",
+                    Doctor.class
+            );
+            query.setParameter("specialiteId", specialiteId);
+            return query.getResultList();
         } finally {
             em.close();
         }

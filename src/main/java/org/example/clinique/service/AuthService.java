@@ -12,6 +12,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class AuthService {
@@ -179,5 +180,49 @@ public class AuthService {
                 .map(DoctorMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
+
+    public void updateDoctor(UUID doctorId, DoctorRegisterRequestDTO dto) {
+        doctorRepository.findById(doctorId).ifPresent(existingDoctor -> {
+            User user = existingDoctor.getUser();
+
+            if (dto.getFullName() != null && !dto.getFullName().isEmpty()) {
+                user.setFullName(dto.getFullName());
+            }
+
+            if (dto.getEmail() != null && !dto.getEmail().isEmpty()) {
+                user.setEmail(dto.getEmail());
+            }
+
+            if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                String hashedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
+                user.setPassword(hashedPassword);
+            }
+
+            if (dto.getMatricule() != null && !dto.getMatricule().isEmpty()) {
+                existingDoctor.setMatricule(dto.getMatricule());
+            }
+
+            if (dto.getSpecialiteId() != null) {
+                Specialite specialite = specialiteRepository.findById(dto.getSpecialiteId())
+                        .orElseThrow(() -> new RuntimeException("Spécialité introuvable"));
+                existingDoctor.setSpecialite(specialite);
+            }
+
+            userRepository.update(user);
+            doctorRepository.update(existingDoctor);
+        });
+    }
+
+    public void deleteDoctor(UUID doctorId) {
+        doctorRepository.findById(doctorId).ifPresent(doctor -> {
+            User user = doctor.getUser();
+            if (user != null) {
+                user.setActive(false);
+                userRepository.update(user);
+            }
+        });
+    }
+
+
 
 }

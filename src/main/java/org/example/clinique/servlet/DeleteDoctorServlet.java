@@ -5,18 +5,18 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.example.clinique.dto.DoctorResponseDTO;
 import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AuthService;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.UUID;
 
-@WebServlet("/admin/doctors")
-public class DoctorServlet extends HttpServlet {
+@WebServlet("/admin/delete-doctor")
+public class DeleteDoctorServlet extends HttpServlet {
 
     private AuthService authService;
 
+    @Override
     public void init() throws ServletException {
         this.authService = new AuthService(
                 new UserRepositoryImpl(),
@@ -29,14 +29,12 @@ public class DoctorServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<DoctorResponseDTO> allDoctors = authService.getAllDoctors();
-        List<DoctorResponseDTO> activeDoctors = allDoctors.stream()
-                .filter(DoctorResponseDTO::getIsActive)
-                .toList();
+        String idParam = req.getParameter("id");
+        if (idParam != null && !idParam.isEmpty()) {
+            UUID doctorId = UUID.fromString(idParam);
+            authService.deleteDoctor(doctorId);
+        }
 
-        req.setAttribute("doctors", activeDoctors);
-        req.setAttribute("count", activeDoctors.size());
-
-        req.getRequestDispatcher("/dashboard/pages/listDoctors.jsp").forward(req, resp);
+        resp.sendRedirect(req.getContextPath() + "/admin/doctors");
     }
 }
