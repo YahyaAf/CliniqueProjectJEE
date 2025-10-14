@@ -54,7 +54,10 @@ public class RegisterDoctorServlet extends HttpServlet {
 
         List<String> errors = validator.validate(dto);
 
-        if (!errors.isEmpty()) {
+        if(!errors.isEmpty()){
+            List<SpecialiteResponseDTO> specialites  = authService.getAllSpecialites();
+            req.setAttribute("specialites", specialites);
+
             req.setAttribute("errors", errors);
             req.getRequestDispatcher("/dashboard/pages/registerDoctor.jsp").forward(req, resp);
             return;
