@@ -41,11 +41,11 @@ public class RegisterStaffServlet extends HttpServlet {
 
         if(!errors.isEmpty()){
             req.setAttribute("errors",errors);
-            req.getRequestDispatcher("/dashboard/pages/registerStaff.jsp").forward(req,resp);
+            req.getRequestDispatcher("/dashboard/pages/staff/registerStaff.jsp").forward(req,resp);
             return;
         }
 
         authService.registerStaff(dto);
-        resp.sendRedirect(req.getContextPath() + "/admin/list-users");
+        resp.sendRedirect(req.getContextPath() + "/admin/staff");
     }
 }

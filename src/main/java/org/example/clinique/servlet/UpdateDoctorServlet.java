@@ -42,7 +42,7 @@ public class UpdateDoctorServlet extends HttpServlet {
 
         req.setAttribute("specialites", authService.getAllSpecialites());
 
-        req.getRequestDispatcher("/dashboard/pages/editDoctor.jsp").forward(req, resp);
+        req.getRequestDispatcher("/dashboard/pages/doctors/editDoctor.jsp").forward(req, resp);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class UpdateDoctorServlet extends HttpServlet {
             req.setAttribute("errors", errors);
             req.setAttribute("doctor", authService.getDoctorById(doctorId).orElse(null));
             req.setAttribute("specialites", authService.getAllSpecialites());
-            req.getRequestDispatcher("/dashboard/pages/editDoctor.jsp").forward(req, resp);
+            req.getRequestDispatcher("/dashboard/pages/doctors/editDoctor.jsp").forward(req, resp);
             return;
         }
 

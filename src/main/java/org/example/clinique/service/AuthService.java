@@ -228,6 +228,11 @@ public class AuthService {
                 .map(DoctorMapper::toResponseDTO);
     }
 
-
+    public List<StaffResponseDTO> getAllStaffs(){
+        return staffRepository.findAll()
+                .stream()
+                .map(StaffMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 
 }

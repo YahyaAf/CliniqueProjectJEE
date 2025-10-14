@@ -1,6 +1,7 @@
 package org.example.clinique.mapper;
 
 import org.example.clinique.dto.StaffRegisterRequestDTO;
+import org.example.clinique.dto.StaffResponseDTO;
 import org.example.clinique.model.Staff;
 import org.example.clinique.model.User;
 import org.example.clinique.model.enums.Role;
@@ -22,5 +23,15 @@ public class StaffMapper {
         staff.setPosition(dto.getPosition());
         staff.setUser(user);
         return staff;
+    }
+
+    public static StaffResponseDTO toResponseDTO(Staff staff){
+        return new StaffResponseDTO(
+                staff.getId(),
+                staff.getUser().getFullName(),
+                staff.getUser().getEmail(),
+                staff.getUser().isActive(),
+                staff.getPosition()
+        );
     }
 }

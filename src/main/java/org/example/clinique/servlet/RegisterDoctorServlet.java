@@ -37,7 +37,7 @@ public class RegisterDoctorServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<SpecialiteResponseDTO> specialites  = authService.getAllSpecialites();
         req.setAttribute("specialites", specialites);
-        req.getRequestDispatcher("/dashboard/pages/registerDoctor.jsp").forward(req, resp);
+        req.getRequestDispatcher("/dashboard/pages/doctors/registerDoctor.jsp").forward(req, resp);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class RegisterDoctorServlet extends HttpServlet {
             req.setAttribute("specialites", specialites);
 
             req.setAttribute("errors", errors);
-            req.getRequestDispatcher("/dashboard/pages/registerDoctor.jsp").forward(req, resp);
+            req.getRequestDispatcher("/dashboard/pages/doctors/registerDoctor.jsp").forward(req, resp);
             return;
         }
 
