@@ -245,4 +245,35 @@ public class AuthService {
         });
     }
 
+    public void updateStaff(UUID staffId, StaffRegisterRequestDTO dto){
+        staffRepository.findById(staffId).ifPresent(existingStaff -> {
+            User user = existingStaff.getUser();
+
+            if (dto.getFullName() != null && !dto.getFullName().isEmpty()) {
+                user.setFullName(dto.getFullName());
+            }
+
+            if (dto.getEmail() != null && !dto.getEmail().isEmpty()) {
+                user.setEmail(dto.getEmail());
+            }
+
+            if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                String hashedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
+                user.setPassword(hashedPassword);
+            }
+
+            if (dto.getPosition() != null && !dto.getPosition().isEmpty()) {
+                existingStaff.setPosition(dto.getPosition());
+            }
+
+            userRepository.update(user);
+            staffRepository.update(existingStaff);
+        });
+    }
+
+    public Optional<StaffResponseDTO> getStaffById(UUID id){
+        return staffRepository.findById(id)
+                .map(StaffMapper::toResponseDTO);
+    }
+
 }
