@@ -16,6 +16,7 @@
             <th>#</th>
             <th>Full Name</th>
             <th>Email</th>
+            <th>Status</th>
             <th>Matricule</th>
             <th>Specialité</th>
             <th>Department</th>
@@ -28,6 +29,7 @@
                 <td>${status.index + 1}</td>
                 <td>${doc.fullName}</td>
                 <td>${doc.email}</td>
+                <td>${doc.isActive}</td>
                 <td>${doc.matricule}</td>
                 <td>${doc.specialiteName}</td>
                 <td>${doc.departmentName}</td>

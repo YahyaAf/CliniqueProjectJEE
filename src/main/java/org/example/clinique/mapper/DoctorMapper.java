@@ -43,6 +43,7 @@ public class DoctorMapper {
                 doctor.getId(),
                 doctor.getUser().getFullName(),
                 doctor.getUser().getEmail(),
+                doctor.getUser().isActive(),
                 doctor.getMatricule(),
                 specialiteName,
                 departmentName
