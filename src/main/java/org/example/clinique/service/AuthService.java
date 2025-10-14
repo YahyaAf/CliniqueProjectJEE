@@ -235,4 +235,14 @@ public class AuthService {
                 .collect(Collectors.toList());
     }
 
+    public void deleteStaff(UUID staffId){
+        staffRepository.findById(staffId).ifPresent(staff -> {
+            User user = staff.getUser();
+            if(user != null){
+                user.setActive(false);
+                userRepository.update(user);
+            }
+        });
+    }
+
 }
