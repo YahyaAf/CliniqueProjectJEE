@@ -94,6 +94,27 @@ public class PatientRepositoryImpl implements PatientRepository {
         }
     }
 
+    @Override
+    public Optional<Patient> findByUserId(UUID userId) {
+        EntityManager em = JpaUtil.getEntityManager();
+        try {
+            TypedQuery<Patient> query = em.createQuery(
+                    "SELECT p FROM Patient p WHERE p.user.id = :userId",
+                    Patient.class
+            );
+            query.setParameter("userId", userId);
+            List<Patient> result = query.getResultList();
+
+            if (result.isEmpty()) {
+                return Optional.empty();
+            }
+            return Optional.of(result.get(0));
+        } finally {
+            em.close();
+        }
+    }
+
+
     @FunctionalInterface
     private interface EntityManagerConsumer {
         void accept(EntityManager em);

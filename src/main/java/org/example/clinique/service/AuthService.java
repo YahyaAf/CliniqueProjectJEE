@@ -117,6 +117,7 @@ public class AuthService {
                 return false;
             }
             this.currentUser= new UserResponseLoginDTO(
+                    user.getId(),
                     user.getEmail(),
                     user.getFullName(),
                     user.getRole().name()
@@ -338,6 +339,11 @@ public class AuthService {
 
     public Optional<PatientResponseDTO> getPatientById(UUID id){
         return patientRepository.findById(id)
+                .map(PatientMapper::toResponseDTO);
+    }
+
+    public Optional<PatientResponseDTO> getPatientByUserId(UUID userId) {
+        return patientRepository.findByUserId(userId)
                 .map(PatientMapper::toResponseDTO);
     }
 

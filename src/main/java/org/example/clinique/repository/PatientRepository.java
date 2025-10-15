@@ -14,4 +14,5 @@ public interface PatientRepository {
     void update(Patient patient);
     void delete(UUID id);
     Optional<Patient> findByUser(User user);
+    Optional<Patient> findByUserId(UUID userId);
 }
