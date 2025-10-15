@@ -1,6 +1,7 @@
 package org.example.clinique.mapper;
 
 import org.example.clinique.dto.PatientRegisterRequestDTO;
+import org.example.clinique.dto.PatientResponseDTO;
 import org.example.clinique.model.Patient;
 import org.example.clinique.model.User;
 import org.example.clinique.model.enums.Role;
@@ -25,5 +26,18 @@ public class PatientMapper {
         patient.setInsuranceNumber(dto.getInsuranceNumber());
         patient.setUser(user);
         return patient;
+    }
+
+    public static PatientResponseDTO toResponseDTO(Patient patient){
+        return new PatientResponseDTO(
+                patient.getId(),
+                patient.getUser().getFullName(),
+                patient.getUser().getEmail(),
+                patient.getUser().isActive(),
+                patient.getDateOfBirth(),
+                patient.getGender(),
+                patient.getBloodType(),
+                patient.getInsuranceNumber()
+        );
     }
 }
