@@ -283,4 +283,14 @@ public class AuthService {
                 .collect(Collectors.toList());
     }
 
+    public void deletePatient(UUID id){
+        patientRepository.findById(id).ifPresent(patient->{
+            User user = patient.getUser();
+            if(user != null){
+                user.setActive(false);
+                userRepository.update(user);
+            }
+        });
+    }
+
 }
