@@ -53,10 +53,7 @@
         </c:forEach>
         </tbody>
     </table>
-
-    <br>
-    <a href="${pageContext.request.contextPath}/admin/register-patient">Add New Doctor</a>
-
+    
 </div>
 </body>
 </html>

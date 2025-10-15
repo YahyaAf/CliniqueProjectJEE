@@ -11,16 +11,18 @@ public class PatientResponseDTO {
     private String fullName;
     private String email;
     private Boolean isActive;
+    private String cin;
     private LocalDate dateOfBirth;
     private Gender gender;
     private BloodType bloodType;
     private String insuranceNumber;
 
-    public PatientResponseDTO(UUID id, String fullName, String email, Boolean isActive, LocalDate dateOfBirth, Gender gender, BloodType bloodType, String insuranceNumber){
+    public PatientResponseDTO(UUID id, String fullName, String email, Boolean isActive, String cin, LocalDate dateOfBirth, Gender gender, BloodType bloodType, String insuranceNumber){
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.isActive = isActive;
+        this.cin = cin;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
         this.bloodType = bloodType;
@@ -38,6 +40,14 @@ public class PatientResponseDTO {
 
     public Boolean getIsActive() { return isActive; }
     public void setIsActive(Boolean active) { isActive = active; }
+
+    public String getCin() {
+        return cin;
+    }
+
+    public void setCin(String cin) {
+        this.cin = cin;
+    }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;

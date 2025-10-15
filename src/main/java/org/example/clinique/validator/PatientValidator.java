@@ -19,7 +19,7 @@ public class PatientValidator {
             errors.add("Email is not valid.");
         }
 
-        if (dto.getPassword() == null || dto.getPassword().length() < 6) {
+        if (dto.getPassword() != null && !dto.getPassword().isEmpty() && dto.getPassword().length() < 6) {
             errors.add("Password must be at least 6 characters long.");
         }
 

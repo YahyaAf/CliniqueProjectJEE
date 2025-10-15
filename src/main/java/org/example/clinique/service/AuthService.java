@@ -293,4 +293,52 @@ public class AuthService {
         });
     }
 
+    public void updatePatient(UUID patientId, PatientRegisterRequestDTO dto){
+        patientRepository.findById(patientId).ifPresent(patient ->{
+            User user = patient.getUser();
+
+            if (dto.getFullName() != null && !dto.getFullName().isEmpty()) {
+                user.setFullName(dto.getFullName());
+            }
+
+            if (dto.getEmail() != null && !dto.getEmail().isEmpty()) {
+                user.setEmail(dto.getEmail());
+            }
+
+            if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
+                String hashedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
+                user.setPassword(hashedPassword);
+            }
+
+            if(dto.getCin() != null && !dto.getCin().isEmpty()){
+                patient.setCin(dto.getCin());
+            }
+
+            if(dto.getDateOfBirth() != null){
+                patient.setDateOfBirth(dto.getDateOfBirth());
+            }
+
+            if (dto.getGender() != null) {
+                patient.setGender(dto.getGender());
+            }
+
+            if (dto.getBloodType() != null) {
+                patient.setBloodType(dto.getBloodType());
+            }
+
+            if(dto.getInsuranceNumber() != null && !dto.getInsuranceNumber().isEmpty()){
+                patient.setInsuranceNumber(dto.getInsuranceNumber());
+            }
+
+            userRepository.update(user);
+            patientRepository.update(patient);
+
+        });
+    }
+
+    public Optional<PatientResponseDTO> getPatientById(UUID id){
+        return patientRepository.findById(id)
+                .map(PatientMapper::toResponseDTO);
+    }
+
 }

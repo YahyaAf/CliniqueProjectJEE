@@ -34,6 +34,7 @@ public class PatientMapper {
                 patient.getUser().getFullName(),
                 patient.getUser().getEmail(),
                 patient.getUser().isActive(),
+                patient.getCin(),
                 patient.getDateOfBirth(),
                 patient.getGender(),
                 patient.getBloodType(),
