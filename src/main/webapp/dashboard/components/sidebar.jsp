@@ -1,215 +1,389 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<!-- Sidebar Styles (à inclure une seule fois dans votre page principale) -->
 <style>
-    .sidebar-gradient {
-        background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-    }
-
-    .sidebar-text {
-        transition: all 0.3s ease;
-        white-space: nowrap;
-    }
-
-    #sidebar.collapsed .sidebar-text {
-        opacity: 0;
-        display: none;
+    :root {
+        --sidebar-width: 280px;
+        --sidebar-collapsed: 85px;
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --dark-bg: #0f172a;
     }
 
     #sidebar {
-        transition: width 0.3s ease;
-        overflow-y: auto;
-        overflow-x: hidden;
+        width: var(--sidebar-width);
+        background: var(--dark-bg);
+        position: fixed;
+        left: 0;
+        top: 0;
+        height: 100vh;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1000;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
     }
 
-    /* Custom Scrollbar pour la sidebar */
-    #sidebar::-webkit-scrollbar {
-        width: 6px;
+    #sidebar.collapsed {
+        width: var(--sidebar-collapsed);
     }
 
-    #sidebar::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
+    /* Header */
+    .sidebar-header {
+        padding: 2rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
     }
 
-    #sidebar::-webkit-scrollbar-thumb {
-        background: rgba(99, 102, 241, 0.5);
-        border-radius: 10px;
+    .logo-wrapper {
+        width: 48px;
+        height: 48px;
+        background: var(--primary-gradient);
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
     }
 
-    #sidebar::-webkit-scrollbar-thumb:hover {
-        background: rgba(99, 102, 241, 0.7);
-    }
-
-    /* Pour Firefox */
-    #sidebar {
-        scrollbar-width: thin;
-        scrollbar-color: rgba(99, 102, 241, 0.5) rgba(255, 255, 255, 0.05);
-    }
-
-    #mainContent {
-        transition: margin-left 0.3s ease;
-    }
-
-    .nav-link.active {
-        background: rgba(99, 102, 241, 0.1);
+    .logo-wrapper i {
+        font-size: 24px;
         color: white;
     }
 
-    .nav-link.active .sidebar-indicator {
-        transform: scaleY(1);
+    .brand-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        white-space: nowrap;
+        opacity: 1;
+        transition: opacity 0.3s;
     }
 
-    .sidebar-indicator {
+    #sidebar.collapsed .brand-text {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .toggle-btn {
+        position: absolute;
+        right: -16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 32px;
+        height: 32px;
+        background: var(--primary-gradient);
+        border: 3px solid var(--dark-bg);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .toggle-btn:hover {
+        transform: translateY(-50%) scale(1.1);
+    }
+
+    .toggle-btn i {
+        font-size: 12px;
+        color: white;
+        transition: transform 0.3s;
+    }
+
+    #sidebar.collapsed .toggle-btn i {
+        transform: rotate(180deg);
+    }
+
+    /* Navigation */
+    .sidebar-nav {
+        padding: 1.5rem 1rem;
+        overflow-y: auto;
+        height: calc(100vh - 120px);
+        scrollbar-width: thin;
+        scrollbar-color: rgba(102, 126, 234, 0.5) transparent;
+    }
+
+    .sidebar-nav::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb {
+        background: rgba(102, 126, 234, 0.5);
+        border-radius: 4px;
+    }
+
+    .nav-item {
+        margin-bottom: 0.5rem;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.875rem 1.25rem;
+        color: rgba(255, 255, 255, 0.6);
+        text-decoration: none;
+        border-radius: 12px;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-link::before {
+        content: '';
         position: absolute;
         left: 0;
         top: 0;
         width: 4px;
         height: 100%;
-        background: linear-gradient(to bottom, #6366f1, #ec4899);
-        border-radius: 0 4px 4px 0;
+        background: var(--primary-gradient);
         transform: scaleY(0);
-        transition: transform 0.3s ease;
+        transition: transform 0.3s;
+    }
+
+    .nav-link:hover {
+        background: rgba(102, 126, 234, 0.1);
+        color: white;
+        transform: translateX(4px);
+    }
+
+    .nav-link.active {
+        background: rgba(102, 126, 234, 0.15);
+        color: white;
+    }
+
+    .nav-link.active::before {
+        transform: scaleY(1);
+    }
+
+    .nav-icon {
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+        font-size: 1.125rem;
+    }
+
+    .nav-text {
+        white-space: nowrap;
+        opacity: 1;
+        transition: opacity 0.3s;
+    }
+
+    #sidebar.collapsed .nav-text {
+        opacity: 0;
+    }
+
+    /* Divider */
+    .nav-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.08);
+        margin: 1rem 0;
+    }
+
+    /* Logout Special */
+    .nav-link.logout {
+        color: rgba(248, 113, 113, 0.8);
+    }
+
+    .nav-link.logout:hover {
+        background: rgba(248, 113, 113, 0.1);
+        color: #f87171;
+    }
+
+    .nav-link.logout::before {
+        background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+    }
+
+    /* Tooltip for collapsed state */
+    .nav-link[data-tooltip] {
+        position: relative;
+    }
+
+    #sidebar.collapsed .nav-link[data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        margin-left: 1rem;
+        padding: 0.5rem 1rem;
+        background: rgba(15, 23, 42, 0.95);
+        color: white;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 1001;
+        border: 1px solid rgba(102, 126, 234, 0.3);
+    }
+
+    /* Main Content Adjustment */
+    #mainContent {
+        margin-left: var(--sidebar-width);
+        transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #sidebar.collapsed ~ #mainContent {
+        margin-left: var(--sidebar-collapsed);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        #sidebar {
+            transform: translateX(-100%);
+        }
+
+        #sidebar.mobile-open {
+            transform: translateX(0);
+        }
+
+        #mainContent {
+            margin-left: 0 !important;
+        }
     }
 </style>
 
 <!-- Sidebar -->
-<aside id="sidebar" class="fixed left-0 top-0 h-screen sidebar-gradient shadow-2xl z-50 w-64">
+<aside id="sidebar">
     <!-- Header -->
-    <div class="flex items-center justify-between p-6 border-b border-white/10">
-        <div class="flex items-center gap-3">
-            <i class="fas fa-heartbeat text-4xl bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent"></i>
-            <span class="text-white text-2xl font-bold sidebar-text">MediCare+</span>
+    <div class="sidebar-header">
+        <div class="logo-wrapper">
+            <i class="fas fa-heartbeat"></i>
         </div>
-        <button onclick="toggleSidebar()" class="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center text-white transition-all">
-            <i class="fas fa-bars"></i>
-        </button>
+        <span class="brand-text">MediCare<span style="color: #667eea;">+</span></span>
+        <div class="toggle-btn" onclick="toggleSidebar()">
+            <i class="fas fa-chevron-left"></i>
+        </div>
     </div>
 
-    <!-- Navigation Menu -->
-    <ul class="p-4 space-y-2">
-        <li>
-            <a href="${pageContext.request.contextPath}/dashboard"
-               class="nav-link ${currentPage == 'dashboard' ? 'active' : ''} flex items-center gap-3 px-5 py-4 text-white/70 hover:text-white hover:bg-indigo-500/10 rounded-xl transition-all relative group">
-                <span class="sidebar-indicator"></span>
-                <i class="fas fa-home text-xl"></i>
-                <span class="sidebar-text">Dashboard</span>
-            </a>
-        </li>
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/dashboard/home.jsp"
+                   class="nav-link ${currentPage == 'dashboard' ? 'active' : ''}"
+                   data-tooltip="Dashboard">
+                    <i class="fas fa-home nav-icon"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="${pageContext.request.contextPath}/patients"
-               class="nav-link ${currentPage == 'patients' ? 'active' : ''} flex items-center gap-3 px-5 py-4 text-white/70 hover:text-white hover:bg-indigo-500/10 rounded-xl transition-all relative group">
-                <span class="sidebar-indicator"></span>
-                <i class="fas fa-users text-xl"></i>
-                <span class="sidebar-text">Patients</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/list-users"
+                   class="nav-link ${currentPage == 'patients' ? 'active' : ''}"
+                   data-tooltip="Patients">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span class="nav-text">Users</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="${pageContext.request.contextPath}/doctors"
-               class="nav-link ${currentPage == 'doctors' ? 'active' : ''} flex items-center gap-3 px-5 py-4 text-white/70 hover:text-white hover:bg-indigo-500/10 rounded-xl transition-all relative group">
-                <span class="sidebar-indicator"></span>
-                <i class="fas fa-user-md text-xl"></i>
-                <span class="sidebar-text">Docteurs</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/patients"
+                   class="nav-link ${currentPage == 'patients' ? 'active' : ''}"
+                   data-tooltip="Patients">
+                    <i class="fas fa-users nav-icon"></i>
+                    <span class="nav-text">Patients</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="${pageContext.request.contextPath}/appointments"
-               class="nav-link ${currentPage == 'appointments' ? 'active' : ''} flex items-center gap-3 px-5 py-4 text-white/70 hover:text-white hover:bg-indigo-500/10 rounded-xl transition-all relative group">
-                <span class="sidebar-indicator"></span>
-                <i class="fas fa-calendar-alt text-xl"></i>
-                <span class="sidebar-text">Rendez-vous</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/doctors"
+                   class="nav-link ${currentPage == 'doctors' ? 'active' : ''}"
+                   data-tooltip="Docteurs">
+                    <i class="fas fa-user-md nav-icon"></i>
+                    <span class="nav-text">Docteurs</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="${pageContext.request.contextPath}/medical-records"
-               class="nav-link ${currentPage == 'medical-records' ? 'active' : ''} flex items-center gap-3 px-5 py-4 text-white/70 hover:text-white hover:bg-indigo-500/10 rounded-xl transition-all relative group">
-                <span class="sidebar-indicator"></span>
-                <i class="fas fa-file-medical text-xl"></i>
-                <span class="sidebar-text">Dossiers Médicaux</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/staff"
+                   class="nav-link ${currentPage == 'staff' ? 'active' : ''}"
+                   data-tooltip="Personnel">
+                    <i class="fas fa-user-nurse nav-icon"></i>
+                    <span class="nav-text">Personnel</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="${pageContext.request.contextPath}/prescriptions"
-               class="nav-link ${currentPage == 'prescriptions' ? 'active' : ''} flex items-center gap-3 px-5 py-4 text-white/70 hover:text-white hover:bg-indigo-500/10 rounded-xl transition-all relative group">
-                <span class="sidebar-indicator"></span>
-                <i class="fas fa-pills text-xl"></i>
-                <span class="sidebar-text">Prescriptions</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/appointments"
+                   class="nav-link ${currentPage == 'appointments' ? 'active' : ''}"
+                   data-tooltip="Rendez-vous">
+                    <i class="fas fa-calendar-check nav-icon"></i>
+                    <span class="nav-text">Rendez-vous</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="${pageContext.request.contextPath}/statistics"
-               class="nav-link ${currentPage == 'statistics' ? 'active' : ''} flex items-center gap-3 px-5 py-4 text-white/70 hover:text-white hover:bg-indigo-500/10 rounded-xl transition-all relative group">
-                <span class="sidebar-indicator"></span>
-                <i class="fas fa-chart-line text-xl"></i>
-                <span class="sidebar-text">Statistiques</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/medical-records"
+                   class="nav-link ${currentPage == 'records' ? 'active' : ''}"
+                   data-tooltip="Dossiers">
+                    <i class="fas fa-file-medical-alt nav-icon"></i>
+                    <span class="nav-text">Dossiers Médicaux</span>
+                </a>
+            </li>
 
-        <!-- Divider -->
-        <li class="pt-4">
-            <div class="border-t border-white/10 mb-4"></div>
-        </li>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/departments"
+                   class="nav-link ${currentPage == 'departments' ? 'active' : ''}"
+                   data-tooltip="Départements">
+                    <i class="fas fa-building nav-icon"></i>
+                    <span class="nav-text">Départements</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="${pageContext.request.contextPath}/settings"
-               class="nav-link ${currentPage == 'settings' ? 'active' : ''} flex items-center gap-3 px-5 py-4 text-white/70 hover:text-white hover:bg-indigo-500/10 rounded-xl transition-all relative group">
-                <span class="sidebar-indicator"></span>
-                <i class="fas fa-cog text-xl"></i>
-                <span class="sidebar-text">Paramètres</span>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/specialites"
+                   class="nav-link ${currentPage == 'specialites' ? 'active' : ''}"
+                   data-tooltip="Spécialités">
+                    <i class="fas fa-stethoscope nav-icon"></i>
+                    <span class="nav-text">Spécialités</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="${pageContext.request.contextPath}/logout"
-               class="nav-link flex items-center gap-3 px-5 py-4 text-red-400/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all relative group">
-                <span class="sidebar-indicator bg-gradient-to-b from-red-500 to-red-600"></span>
-                <i class="fas fa-sign-out-alt text-xl"></i>
-                <span class="sidebar-text">Déconnexion</span>
-            </a>
-        </li>
-    </ul>
+            <li class="nav-divider"></li>
+
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/settings"
+                   class="nav-link ${currentPage == 'settings' ? 'active' : ''}"
+                   data-tooltip="Paramètres">
+                    <i class="fas fa-cog nav-icon"></i>
+                    <span class="nav-text">Paramètres</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="${pageContext.request.contextPath}/logout"
+                   class="nav-link logout"
+                   data-tooltip="Déconnexion">
+                    <i class="fas fa-sign-out-alt nav-icon"></i>
+                    <span class="nav-text">Déconnexion</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </aside>
 
-<!-- Sidebar Toggle Script -->
 <script>
-    let sidebarCollapsed = false;
-
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-
-        sidebarCollapsed = !sidebarCollapsed;
-
-        if (sidebarCollapsed) {
-            sidebar.classList.add('collapsed');
-            sidebar.style.width = '80px';
-            if (mainContent) {
-                mainContent.style.marginLeft = '80px';
-            }
-        } else {
-            sidebar.classList.remove('collapsed');
-            sidebar.style.width = '256px';
-            if (mainContent) {
-                mainContent.style.marginLeft = '256px';
-            }
-        }
-
-        // Sauvegarder l'état dans localStorage
-        localStorage.setItem('sidebarCollapsed', sidebarCollapsed);
+        sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
     }
 
-    // Restaurer l'état de la sidebar au chargement
-    document.addEventListener('DOMContentLoaded', function() {
-        const savedState = localStorage.getItem('sidebarCollapsed');
-        if (savedState === 'true') {
-            toggleSidebar();
+    document.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            document.getElementById('sidebar').classList.add('collapsed');
         }
     });
+
+    if (window.innerWidth <= 768) {
+        function toggleMobileSidebar() {
+            document.getElementById('sidebar').classList.toggle('mobile-open');
+        }
+    }
 </script>

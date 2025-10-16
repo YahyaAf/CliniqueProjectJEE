@@ -1,40 +1,174 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Staff - MediCare+</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
 
-<h1>Modifier Staff</h1>
+<!-- Définir la page active pour la sidebar -->
+<c:set var="currentPage" value="staff" scope="request"/>
 
-<c:if test="${not empty errors}">
-    <div style="color: red;">
-        <ul>
-            <c:forEach var="error" items="${errors}">
-                <li>${error}</li>
-            </c:forEach>
-        </ul>
+<!-- Include Sidebar Component -->
+<jsp:include page="/dashboard/components/sidebar.jsp"/>
+
+<!-- Main Content -->
+<main id="mainContent" class="p-8 ml-64">
+
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">
+            <i class="fas fa-user-edit mr-2"></i>Modifier Staff
+        </h1>
+        <p class="text-white/70">Mettre à jour les informations du personnel</p>
     </div>
-</c:if>
 
-<form action="${pageContext.request.contextPath}/admin/update-staff" method="post">
-    <input type="hidden" name="id" value="${staff.id}" />
+    <!-- Edit Staff Form -->
+    <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-8 max-w-5xl">
 
-    <label>Full Name:</label>
-    <input type="text" name="fullName" value="${staff.fullName}" required />
-    <br/>
+        <!-- Display validation errors -->
+        <c:if test="${not empty errors}">
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-exclamation-circle text-red-500 text-lg mt-0.5"></i>
+                    <div>
+                        <p class="font-semibold text-red-800 mb-2">Erreurs de validation:</p>
+                        <ul class="space-y-1 text-sm text-red-700">
+                            <c:forEach var="error" items="${errors}">
+                                <li>• ${error}</li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </c:if>
 
-    <label>Email:</label>
-    <input type="email" name="email" value="${staff.email}" required />
-    <br/>
+        <form action="${pageContext.request.contextPath}/admin/update-staff" method="post">
+            <input type="hidden" name="id" value="${staff.id}" />
 
-    <label>Password:</label>
-    <input type="password" name="password" placeholder="Leave blank if unchanged" />
-    <br/>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    <label>Position:</label>
-    <input type="text" name="position" value="${staff.position}" required />
-    <br/>
+                <!-- Full Name -->
+                <div>
+                    <label for="fullName" class="block text-sm font-medium text-white/90 mb-2">
+                        <i class="fas fa-user mr-2"></i>Nom Complet
+                    </label>
+                    <input type="text"
+                           id="fullName"
+                           name="fullName"
+                           value="${staff.fullName}"
+                           placeholder="Entrer le nom complet"
+                           required
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                </div>
 
-    <br/><br/>
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-white/90 mb-2">
+                        <i class="fas fa-envelope mr-2"></i>Email
+                    </label>
+                    <input type="email"
+                           id="email"
+                           name="email"
+                           value="${staff.email}"
+                           placeholder="Entrer l'email"
+                           required
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                </div>
 
-    <button type="submit" class="btn btn-primary">Modifier</button>
-    <a href="${pageContext.request.contextPath}/admin/staff">annuler</a>
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block text-sm font-medium text-white/90 mb-2">
+                        <i class="fas fa-lock mr-2"></i>Mot de passe
+                    </label>
+                    <input type="password"
+                           id="password"
+                           name="password"
+                           placeholder="Laisser vide si inchangé"
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                    <p class="text-xs text-white/50 mt-1">
+                        <i class="fas fa-info-circle"></i> Laisser vide pour conserver le mot de passe actuel
+                    </p>
+                </div>
 
-</form>
+                <!-- Position -->
+                <div>
+                    <label for="position" class="block text-sm font-medium text-white/90 mb-2">
+                        <i class="fas fa-briefcase mr-2"></i>Position
+                    </label>
+                    <input type="text"
+                           id="position"
+                           name="position"
+                           value="${staff.position}"
+                           placeholder="Entrer la position"
+                           required
+                           class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 outline-none transition text-white placeholder-white/50">
+                </div>
+
+            </div>
+
+            <!-- Form Actions -->
+            <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-white/10">
+                <a href="${pageContext.request.contextPath}/admin/staff"
+                   class="px-6 py-2.5 border border-white/20 text-white/90 rounded-lg hover:bg-white/5 font-medium transition inline-flex items-center gap-2">
+                    <i class="fas fa-times"></i>
+                    Annuler
+                </a>
+
+                <button type="submit"
+                        class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition shadow-lg shadow-indigo-600/30 inline-flex items-center gap-2">
+                    <i class="fas fa-save"></i>
+                    Modifier
+                </button>
+            </div>
+
+        </form>
+    </div>
+</main>
+
+<!-- Sidebar Toggle Script (if needed) -->
+<script>
+    // Add any interactive JavaScript here if needed
+    document.addEventListener('DOMContentLoaded', function() {
+        // Optional: Add form validation feedback
+        const form = document.querySelector('form');
+        const inputs = form.querySelectorAll('input[required]');
+
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (!this.value.trim()) {
+                    this.classList.add('border-red-400');
+                } else {
+                    this.classList.remove('border-red-400');
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
