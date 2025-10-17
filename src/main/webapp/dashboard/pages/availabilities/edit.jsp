@@ -60,6 +60,6 @@
     <button type="submit">Mettre à jour</button>
 </form>
 
-<a href="<%=request.getContextPath()%>/admin/availabilities">⬅ Retour</a>
+<a href="<%=request.getContextPath()%>/doctor/availabilities">⬅ Retour</a>
 </body>
 </html>

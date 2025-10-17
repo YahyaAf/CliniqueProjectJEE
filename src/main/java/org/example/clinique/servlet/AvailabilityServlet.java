@@ -29,8 +29,9 @@ public class AvailabilityServlet extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        this.availabilityService = new AvailabilityService(new AvailabilityRepositoryImpl());
-        this.validator = new AvailabilityValidator();
+        AvailabilityRepositoryImpl repo = new AvailabilityRepositoryImpl();
+        this.availabilityService = new AvailabilityService(repo);
+        this.validator = new AvailabilityValidator(repo);
         this.authService = new AuthService(
                 new UserRepositoryImpl(),
                 new PatientRepositoryImpl(),
@@ -153,12 +154,12 @@ public class AvailabilityServlet extends HttpServlet {
         AvailabilityRequestDTO dto = extractDTO(req, doctorId);
         List<String> errors = validator.validate(dto);
 
-        if (!errors.isEmpty()) {
-            req.setAttribute("errors", errors);
-            req.setAttribute("availability", availabilityService.getAvailabilityById(id));
-            req.getRequestDispatcher("/dashboard/pages/availabilities/edit.jsp").forward(req, resp);
-            return;
-        }
+//        if (!errors.isEmpty()) {
+//            req.setAttribute("errors", errors);
+//            req.setAttribute("availability", availabilityService.getAvailabilityById(id));
+//            req.getRequestDispatcher("/dashboard/pages/availabilities/edit.jsp").forward(req, resp);
+//            return;
+//        }
 
         availabilityService.updateAvailability(id, dto);
         resp.sendRedirect(req.getContextPath() + "/doctor/availabilities");
