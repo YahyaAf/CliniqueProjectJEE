@@ -347,4 +347,9 @@ public class AuthService {
                 .map(PatientMapper::toResponseDTO);
     }
 
+    public Optional<DoctorResponseDTO> getDoctorByUserId(UUID userId){
+        return doctorRepository.findByUserId(userId)
+                .map(DoctorMapper::toResponseDTO);
+    }
+
 }

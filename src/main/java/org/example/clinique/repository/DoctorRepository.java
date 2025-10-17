@@ -15,4 +15,5 @@ public interface DoctorRepository {
     void delete(UUID id);
     Optional<Doctor> findByUser(User user);
     List<Doctor> findBySpecialiteId(UUID specialiteId);
+    Optional<Doctor> findByUserId(UUID id);
 }
