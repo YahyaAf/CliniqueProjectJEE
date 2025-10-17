@@ -20,12 +20,10 @@ public class AvailabilityValidator {
     public List<String> validate(AvailabilityRequestDTO dto) {
         List<String> errors = new ArrayList<>();
 
-        // ✅ تحقق من اليوم
         if (dto.getDayOfWeek() == null || dto.getDayOfWeek().trim().isEmpty()) {
             errors.add("Day of week is required.");
         }
 
-        // ✅ تحقق من الوقت
         if (dto.getStartTime() == null) {
             errors.add("Start time is required.");
         }
@@ -34,24 +32,20 @@ public class AvailabilityValidator {
             errors.add("End time is required.");
         }
 
-        // ✅ تحقق من ترتيب الوقت
         if (dto.getStartTime() != null && dto.getEndTime() != null) {
             if (!dto.getEndTime().isAfter(dto.getStartTime())) {
                 errors.add("End time must be after start time.");
             }
         }
 
-        // ✅ تحقق من مدة الحجز
         if (dto.getSlotDuration() <= 0) {
             errors.add("Slot duration must be greater than 0.");
         }
 
-        // ✅ تحقق من الطبيب
         if (dto.getDoctorId() == null) {
             errors.add("Doctor ID is required.");
         }
 
-        // ✅ تحقق واش كاين نفس اليوم للطبيب وراه مازال active
         if (dto.getDoctorId() != null && dto.getDayOfWeek() != null) {
             List<Availability> existingAvailabilities =
                     availabilityRepository.findByDoctorId(dto.getDoctorId());
