@@ -157,7 +157,7 @@ public class CreateAppointmentServlet extends HttpServlet {
                     "Appointment created successfully! Appointment Number: " + createdAppointment.getAppointmentNumber());
 
             // Rediriger vers la page de liste des appointments
-            resp.sendRedirect(req.getContextPath() + "/appointments/list");
+            resp.sendRedirect(req.getContextPath() + "/pages/appointments/list");
 
         } catch (IllegalArgumentException e) {
             req.setAttribute("errorMessage", "Invalid data format: " + e.getMessage());
