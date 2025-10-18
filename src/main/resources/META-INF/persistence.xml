@@ -13,6 +13,7 @@
             <class>org.example.clinique.model.Department</class>
             <class>org.example.clinique.model.Specialite</class>
             <class>org.example.clinique.model.Availability</class>
+            <class>org.example.clinique.model.Appointment</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5433/clinique_db"/>

@@ -352,4 +352,11 @@ public class AuthService {
                 .map(DoctorMapper::toResponseDTO);
     }
 
+    public List<DoctorResponseDTO> getDoctorsBySpecialityId(UUID specialityId){
+            return doctorRepository.findBySpecialiteId(specialityId)
+                    .stream()
+                    .map(DoctorMapper::toResponseDTO)
+                    .collect(Collectors.toList());
+    }
+
 }
