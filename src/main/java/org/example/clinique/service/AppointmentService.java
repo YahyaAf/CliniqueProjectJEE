@@ -259,4 +259,28 @@ public class AppointmentService {
         String randomPart = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         return prefix + "-" + timestamp.substring(timestamp.length() - 6) + "-" + randomPart;
     }
+
+    // Ajouter cette méthode dans AppointmentService
+    public void cancelAppointment(UUID appointmentId) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+
+        if (appointmentOpt.isEmpty()) {
+            throw new RuntimeException("Appointment not found with id: " + appointmentId);
+        }
+
+        Appointment appointment = appointmentOpt.get();
+
+        // Vérifier que l'appointment n'est pas déjà annulé ou complété
+        if (appointment.getStatus() == AppointmentStatusEnum.CANCELED) {
+            throw new RuntimeException("Appointment is already cancelled");
+        }
+
+        if (appointment.getStatus() == AppointmentStatusEnum.CANCELED) {
+            throw new RuntimeException("Cannot cancel a completed appointment");
+        }
+
+        // Changer le status à CANCELLED
+        appointment.setStatus(AppointmentStatusEnum.CANCELED);
+        appointmentRepository.update(appointment);
+    }
 }

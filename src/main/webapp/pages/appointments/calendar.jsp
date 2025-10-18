@@ -118,10 +118,9 @@
 
                                     <!-- Appointment Badge -->
                                     <div class="text-xs p-1 rounded cursor-pointer transform hover:scale-105 transition duration-150
-                                                    ${appointment.status == 'SCHEDULED' ? 'bg-blue-100 text-blue-800 border border-blue-300' : ''}
-                                                    ${appointment.status == 'CONFIRMED' ? 'bg-green-100 text-green-800 border border-green-300' : ''}
-                                                    ${appointment.status == 'CANCELLED' ? 'bg-red-100 text-red-800 border border-red-300' : ''}
-                                                    ${appointment.status == 'COMPLETED' ? 'bg-gray-100 text-gray-800 border border-gray-300' : ''}"
+                                                    ${appointment.status == 'PLANNED' ? 'bg-blue-100 text-blue-800 border border-blue-300' : ''}
+                                                    ${appointment.status == 'DONE' ? 'bg-green-100 text-green-800 border border-green-300' : ''}
+                                                    ${appointment.status == 'CANCELED' ? 'bg-red-100 text-red-800 border border-red-300' : ''}"
                                          onclick="showAppointmentDetails('${appointment.id}', '${appointment.appointmentNumber}', '${appointment.doctorName}', '${appointment.patientName}', '${appointment.startTime}', '${appointment.endTime}', '${appointment.status}')">
                                         <div class="font-semibold truncate">
                                             <i class="fas fa-user-md mr-1"></i>Dr. ${appointment.doctorName}
@@ -160,19 +159,15 @@
             <div class="flex flex-wrap gap-4">
                 <div class="flex items-center">
                     <div class="w-4 h-4 bg-blue-100 border border-blue-300 rounded mr-2"></div>
-                    <span class="text-sm text-gray-600">Scheduled</span>
+                    <span class="text-sm text-gray-600">Planned</span>
                 </div>
                 <div class="flex items-center">
                     <div class="w-4 h-4 bg-green-100 border border-green-300 rounded mr-2"></div>
-                    <span class="text-sm text-gray-600">Confirmed</span>
+                    <span class="text-sm text-gray-600">Done</span>
                 </div>
                 <div class="flex items-center">
                     <div class="w-4 h-4 bg-red-100 border border-red-300 rounded mr-2"></div>
-                    <span class="text-sm text-gray-600">Cancelled</span>
-                </div>
-                <div class="flex items-center">
-                    <div class="w-4 h-4 bg-gray-100 border border-gray-300 rounded mr-2"></div>
-                    <span class="text-sm text-gray-600">Completed</span>
+                    <span class="text-sm text-gray-600">Canceled</span>
                 </div>
             </div>
         </div>
@@ -212,10 +207,9 @@
         // Déterminer la couleur du status
         let statusColor = '';
         switch(status) {
-            case 'SCHEDULED': statusColor = 'text-blue-600'; break;
-            case 'CONFIRMED': statusColor = 'text-green-600'; break;
-            case 'CANCELLED': statusColor = 'text-red-600'; break;
-            case 'COMPLETED': statusColor = 'text-gray-600'; break;
+            case 'PLANNED': statusColor = 'text-blue-600'; break;
+            case 'DONE': statusColor = 'text-green-600'; break;
+            case 'CANCELED': statusColor = 'text-red-600'; break;
             default: statusColor = 'text-gray-600';
         }
 
@@ -223,7 +217,7 @@
         detailsDiv.innerHTML =
             '<div class="border-b pb-2">' +
             '<p class="text-sm text-gray-600">Appointment Number</p>' +
-            '<p class="font-semibold">' + appointmentNumber + '</p>' +
+            '<p class="font-semibold">#' + appointmentNumber + '</p>' +
             '</div>' +
             '<div class="border-b pb-2">' +
             '<p class="text-sm text-gray-600">Doctor</p>' +
