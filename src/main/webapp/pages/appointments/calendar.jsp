@@ -194,13 +194,11 @@
                 <!-- Details will be inserted here by JavaScript -->
             </div>
 
-            <div class="mt-6 flex gap-3">
-                <button onclick="closeModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-200">
-                    Close
+            <!-- GHIR Close Button bla View Details -->
+            <div class="mt-6">
+                <button onclick="closeModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                    <i class="fas fa-check mr-2"></i>Close
                 </button>
-                <a id="viewDetailsLink" href="#" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-center transition duration-200">
-                    View Full Details
-                </a>
             </div>
         </div>
     </div>
@@ -210,7 +208,6 @@
     function showAppointmentDetails(id, appointmentNumber, doctorName, patientName, startTime, endTime, status) {
         const modal = document.getElementById('appointmentModal');
         const detailsDiv = document.getElementById('appointmentDetails');
-        const viewLink = document.getElementById('viewDetailsLink');
 
         // Déterminer la couleur du status
         let statusColor = '';
@@ -219,32 +216,32 @@
             case 'CONFIRMED': statusColor = 'text-green-600'; break;
             case 'CANCELLED': statusColor = 'text-red-600'; break;
             case 'COMPLETED': statusColor = 'text-gray-600'; break;
+            default: statusColor = 'text-gray-600';
         }
 
-        detailsDiv.innerHTML = `
-                <div class="border-b pb-2">
-                    <p class="text-sm text-gray-600">Appointment Number</p>
-                    <p class="font-semibold">${appointmentNumber}</p>
-                </div>
-                <div class="border-b pb-2">
-                    <p class="text-sm text-gray-600">Doctor</p>
-                    <p class="font-semibold"><i class="fas fa-user-md mr-2 text-blue-600"></i>Dr. ${doctorName}</p>
-                </div>
-                <div class="border-b pb-2">
-                    <p class="text-sm text-gray-600">Patient</p>
-                    <p class="font-semibold"><i class="fas fa-user mr-2 text-gray-600"></i>${patientName}</p>
-                </div>
-                <div class="border-b pb-2">
-                    <p class="text-sm text-gray-600">Time</p>
-                    <p class="font-semibold"><i class="fas fa-clock mr-2 text-gray-600"></i>${startTime} - ${endTime}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-600">Status</p>
-                    <p class="font-semibold ${statusColor}"><i class="fas fa-circle mr-2 text-xs"></i>${status}</p>
-                </div>
-            `;
+        // Utiliser string concatenation au lieu de template literals
+        detailsDiv.innerHTML =
+            '<div class="border-b pb-2">' +
+            '<p class="text-sm text-gray-600">Appointment Number</p>' +
+            '<p class="font-semibold">' + appointmentNumber + '</p>' +
+            '</div>' +
+            '<div class="border-b pb-2">' +
+            '<p class="text-sm text-gray-600">Doctor</p>' +
+            '<p class="font-semibold"><i class="fas fa-user-md mr-2 text-blue-600"></i>Dr. ' + doctorName + '</p>' +
+            '</div>' +
+            '<div class="border-b pb-2">' +
+            '<p class="text-sm text-gray-600">Patient</p>' +
+            '<p class="font-semibold"><i class="fas fa-user mr-2 text-gray-600"></i>' + patientName + '</p>' +
+            '</div>' +
+            '<div class="border-b pb-2">' +
+            '<p class="text-sm text-gray-600">Time</p>' +
+            '<p class="font-semibold"><i class="fas fa-clock mr-2 text-gray-600"></i>' + startTime + ' - ' + endTime + '</p>' +
+            '</div>' +
+            '<div>' +
+            '<p class="text-sm text-gray-600">Status</p>' +
+            '<p class="font-semibold ' + statusColor + '"><i class="fas fa-circle mr-2 text-xs"></i>' + status + '</p>' +
+            '</div>';
 
-        viewLink.href = '${pageContext.request.contextPath}/appointments/details?id=' + id;
         modal.classList.remove('hidden');
     }
 
