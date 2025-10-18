@@ -90,7 +90,7 @@ public class AvailabilityServlet extends HttpServlet {
                 List<AvailabilityResponseDTO> availabilities = availabilityService.getAvailabilitiesByDoctorId(doctorId);
                 req.setAttribute("availabilities", availabilities);
                 req.setAttribute("count", availabilities.size());
-                req.getRequestDispatcher("/dashboard/pages/availabilities/list.jsp").forward(req, resp);
+                req.getRequestDispatcher("/dashboard/pages/availabilities/calendar.jsp").forward(req, resp);
                 break;
         }
     }
