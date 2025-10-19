@@ -161,10 +161,29 @@
 
                                     <!-- Actions -->
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button onclick="showDetails('${appointment.id}', '${appointment.appointmentNumber}', '${appointment.patientName}', '${appointment.appointmentDate}', '${appointment.startTime}', '${appointment.endTime}', '${appointment.status}')"
-                                                class="text-blue-600 hover:text-blue-900 font-semibold transition duration-150">
-                                            <i class="fas fa-eye mr-1"></i>View
-                                        </button>
+                                        <div class="flex gap-2">
+                                            <!-- View Button -->
+                                            <button onclick="showDetails('${appointment.id}', '${appointment.appointmentNumber}', '${appointment.patientName}', '${appointment.appointmentDate}', '${appointment.startTime}', '${appointment.endTime}', '${appointment.status}')"
+                                                    class="text-blue-600 hover:text-blue-900 font-semibold transition duration-150">
+                                                <i class="fas fa-eye mr-1"></i>View
+                                            </button>
+
+                                            <!-- Mark as Done Button (only for PLANNED) -->
+                                            <c:if test="${appointment.status == 'PLANNED'}">
+                                                <button onclick="confirmMarkAsDone('${appointment.id}', '${appointment.appointmentNumber}')"
+                                                        class="text-green-600 hover:text-green-900 font-semibold transition duration-150">
+                                                    <i class="fas fa-check-circle mr-1"></i>Done
+                                                </button>
+                                            </c:if>
+
+                                            <!-- Cancel Button (only for PLANNED) -->
+                                            <c:if test="${appointment.status == 'PLANNED'}">
+                                                <a href="${pageContext.request.contextPath}/dashboard/appointments/cancelForm?appointmentId=${appointment.id}"
+                                                   class="text-red-600 hover:text-red-900 font-semibold transition duration-150">
+                                                    <i class="fas fa-times-circle mr-1"></i>Cancel
+                                                </a>
+                                            </c:if>
+                                        </div>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -206,6 +225,35 @@
                     <i class="fas fa-check mr-2"></i>Close
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Mark as Done -->
+<div id="markAsDoneModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-center mb-4">
+                <i class="fas fa-check-circle text-green-500 text-5xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">Mark Appointment as Done</h3>
+            <p class="text-sm text-gray-600 text-center mb-4">
+                Are you sure you want to mark appointment <span id="doneAppointmentNumber" class="font-semibold"></span> as completed?
+            </p>
+
+            <form id="markAsDoneForm" method="post" action="${pageContext.request.contextPath}/dashboard/appointments/markDone">
+                <input type="hidden" id="doneAppointmentId" name="appointmentId">
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeMarkAsDoneModal()"
+                            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-200">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
+                    <button type="submit"
+                            class="flex-1 bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                        <i class="fas fa-check mr-2"></i>Confirm
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -253,10 +301,27 @@
         document.getElementById('detailsModal').classList.add('hidden');
     }
 
-    // Close modal when clicking outside
+    // Mark as Done Modal
+    function confirmMarkAsDone(appointmentId, appointmentNumber) {
+        document.getElementById('doneAppointmentId').value = appointmentId;
+        document.getElementById('doneAppointmentNumber').textContent = '#' + appointmentNumber;
+        document.getElementById('markAsDoneModal').classList.remove('hidden');
+    }
+
+    function closeMarkAsDoneModal() {
+        document.getElementById('markAsDoneModal').classList.add('hidden');
+    }
+
+    // Close modals when clicking outside
     document.getElementById('detailsModal').addEventListener('click', function(e) {
         if (e.target === this) {
             closeDetailsModal();
+        }
+    });
+
+    document.getElementById('markAsDoneModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeMarkAsDoneModal();
         }
     });
 </script>
