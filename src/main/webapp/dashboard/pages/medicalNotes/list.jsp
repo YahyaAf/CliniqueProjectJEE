@@ -1,223 +1,265 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Notes - Doctor Dashboard</title>
+    <title>Medical Notes - MediCare+</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
-<div class="min-h-screen py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<body class="gradient-bg min-h-screen">
 
-        <!-- Header -->
-        <div class="mb-8 flex justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Medical Notes</h1>
-                <p class="mt-2 text-gray-600">Manage patient medical records and prescriptions</p>
+<!-- Définir la page active pour la sidebar -->
+<c:set var="currentPage" value="medical-notes" scope="request"/>
+
+<!-- Include Sidebar Component -->
+<jsp:include page="/dashboard/components/sidebar.jsp"/>
+
+<!-- Main Content -->
+<main id="mainContent" class="p-8 ml-64">
+
+    <!-- Page Header -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Medical Notes</h1>
+        <p class="text-white/70">Manage patient medical records and prescriptions</p>
+    </div>
+
+    <!-- Success Message -->
+    <c:if test="${not empty sessionScope.successMessage}">
+        <div class="mb-6 bg-green-500/20 backdrop-blur-lg border border-green-500/30 rounded-xl p-4">
+            <div class="flex items-center">
+                <i class="fas fa-check-circle text-green-400 text-xl mr-3"></i>
+                <p class="text-green-300">${sessionScope.successMessage}</p>
             </div>
+        </div>
+        <c:remove var="successMessage" scope="session"/>
+    </c:if>
+
+    <!-- Error Message -->
+    <c:if test="${not empty sessionScope.errorMessage}">
+        <div class="mb-6 bg-red-500/20 backdrop-blur-lg border border-red-500/30 rounded-xl p-4">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle text-red-400 text-xl mr-3"></i>
+                <p class="text-red-300">${sessionScope.errorMessage}</p>
+            </div>
+        </div>
+        <c:remove var="errorMessage" scope="session"/>
+    </c:if>
+
+    <c:if test="${not empty errorMessage}">
+        <div class="mb-6 bg-red-500/20 backdrop-blur-lg border border-red-500/30 rounded-xl p-4">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle text-red-400 text-xl mr-3"></i>
+                <p class="text-red-300">${errorMessage}</p>
+            </div>
+        </div>
+    </c:if>
+
+    <!-- Doctor Info & Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <!-- Doctor Info Card -->
+        <div class="md:col-span-2 bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-user-md text-white text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-white/60 text-sm">Logged in as Doctor</p>
+                    <p class="text-xl font-bold text-white">Dr. ${doctor.fullName}</p>
+                    <p class="text-white/70 text-sm">
+                        <i class="fas fa-envelope mr-2"></i>${doctor.email}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Notes Card -->
+        <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-6">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-notes-medical text-purple-400 text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-white/60 text-sm">Total Notes</p>
+                    <p class="text-2xl font-bold text-white">${count}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Button Card -->
+        <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-6">
             <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=add"
-               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition duration-200 transform hover:scale-105">
-                <i class="fas fa-plus mr-2"></i>Add Medical Note
+               class="flex items-center justify-center h-full gap-3 text-emerald-400 hover:text-emerald-300 transition group">
+                <div class="w-12 h-12 bg-emerald-500/20 group-hover:bg-emerald-500/30 rounded-xl flex items-center justify-center transition">
+                    <i class="fas fa-plus text-xl"></i>
+                </div>
+                <span class="font-semibold">Add Note</span>
             </a>
         </div>
+    </div>
 
-        <!-- Success Message -->
-        <c:if test="${not empty sessionScope.successMessage}">
-            <div class="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-md" role="alert">
-                <div class="flex items-center">
-                    <i class="fas fa-check-circle mr-3 text-xl"></i>
-                    <p>${sessionScope.successMessage}</p>
-                </div>
-            </div>
-            <c:remove var="successMessage" scope="session"/>
-        </c:if>
+    <!-- Medical Notes Table -->
+    <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl overflow-hidden">
 
-        <!-- Error Message -->
-        <c:if test="${not empty sessionScope.errorMessage}">
-            <div class="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md" role="alert">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
-                    <p>${sessionScope.errorMessage}</p>
-                </div>
-            </div>
-            <c:remove var="errorMessage" scope="session"/>
-        </c:if>
-
-        <c:if test="${not empty errorMessage}">
-            <div class="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md" role="alert">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
-                    <p>${errorMessage}</p>
-                </div>
-            </div>
-        </c:if>
-
-        <!-- Doctor Info Card -->
-        <div class="mb-6 bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
-            <div class="flex items-center">
-                <i class="fas fa-user-md text-4xl text-blue-600 mr-4"></i>
-                <div>
-                    <p class="text-sm text-gray-600">Doctor</p>
-                    <p class="text-lg font-semibold text-gray-900">Dr. ${doctor.fullName}</p>
-                    <p class="text-sm text-gray-500">${doctor.email}</p>
+        <!-- Table Header -->
+        <div class="p-6 border-b border-white/10">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xl font-bold text-white">Medical Notes List</h2>
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/40"></i>
+                    <input type="text"
+                           id="searchInput"
+                           placeholder="Search notes..."
+                           class="pl-10 pr-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition">
                 </div>
             </div>
         </div>
 
-        <!-- Medical Notes Table -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-            <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-800">
-                <h3 class="text-lg font-semibold text-white">
-                    <i class="fas fa-notes-medical mr-2"></i>Medical Notes List
-                </h3>
+        <!-- Table Content -->
+        <c:if test="${empty medicalNotes}">
+            <div class="p-12 text-center">
+                <div class="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-file-medical text-slate-500 text-3xl"></i>
+                </div>
+                <p class="text-white/60 text-lg mb-4">No medical notes found.</p>
+                <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=add"
+                   class="inline-block px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-medium transition">
+                    <i class="fas fa-plus mr-2"></i>Create Your First Medical Note
+                </a>
             </div>
+        </c:if>
 
-            <c:choose>
-                <c:when test="${empty medicalNotes}">
-                    <!-- No Medical Notes -->
-                    <div class="p-12 text-center">
-                        <i class="fas fa-file-medical text-6xl text-gray-300 mb-4"></i>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No Medical Notes Found</h3>
-                        <p class="text-gray-500 mb-4">You haven't created any medical notes yet.</p>
-                        <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=add"
-                           class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg transition duration-200">
-                            <i class="fas fa-plus mr-2"></i>Create Your First Medical Note
-                        </a>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <!-- Medical Notes Table -->
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Appointment
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Patient
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Date
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Symptoms
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Created At
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                            <c:forEach var="note" items="${medicalNotes}">
-                                <tr class="hover:bg-gray-50 transition duration-150">
-                                    <!-- Appointment Number -->
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm font-mono font-semibold text-gray-900">
-                                            #${note.appointmentNumber}
-                                        </div>
-                                    </td>
-
-                                    <!-- Patient -->
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-user text-gray-400 mr-2"></i>
-                                            <div class="text-sm font-medium text-gray-900">
-                                                    ${note.patientName}
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    <!-- Appointment Date -->
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="flex items-center">
-                                            <i class="fas fa-calendar text-gray-400 mr-2"></i>
-                                            <div class="text-sm text-gray-900">
-                                                    ${note.appointmentDate}
-                                            </div>
-                                        </div>
-                                    </td>
-
-                                    <!-- Symptoms Preview -->
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm text-gray-900 max-w-xs truncate">
-                                            <i class="fas fa-heartbeat text-red-500 mr-2"></i>
-                                                ${note.symptoms}
-                                        </div>
-                                    </td>
-
-                                    <!-- Created At -->
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-sm text-gray-500">
-                                            <i class="fas fa-clock mr-2"></i>
-                                                ${note.formattedCreatedAt}
-                                        </div>
-                                    </td>
-
-                                    <!-- Actions -->
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <div class="flex gap-2">
-                                            <!-- View -->
-                                            <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=view&id=${note.id}"
-                                               class="text-blue-600 hover:text-blue-900 font-semibold transition duration-150"
-                                               title="View Details">
-                                                <i class="fas fa-eye mr-1"></i>View
-                                            </a>
-
-                                            <!-- Edit -->
-                                            <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=edit&id=${note.id}"
-                                               class="text-green-600 hover:text-green-900 font-semibold transition duration-150"
-                                               title="Edit">
-                                                <i class="fas fa-edit mr-1"></i>Edit
-                                            </a>
-
-                                            <!-- Delete -->
-                                            <button onclick="confirmDelete('${note.id}', '${note.appointmentNumber}')"
-                                                    class="text-red-600 hover:text-red-900 font-semibold transition duration-150"
-                                                    title="Delete">
-                                                <i class="fas fa-trash mr-1"></i>Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Total Count -->
-                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                        <p class="text-sm text-gray-600">
-                            <i class="fas fa-info-circle mr-2"></i>
-                            Total: <span class="font-semibold">${count}</span> medical note(s)
-                        </p>
-                    </div>
-                </c:otherwise>
-            </c:choose>
-        </div>
+        <c:if test="${not empty medicalNotes}">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                    <tr class="bg-slate-700/30 border-b border-white/10">
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white/90">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-hashtag text-purple-400"></i>
+                                Appointment
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white/90">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-user text-purple-400"></i>
+                                Patient
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white/90">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-calendar text-purple-400"></i>
+                                Date
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white/90">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-heartbeat text-purple-400"></i>
+                                Symptoms
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white/90">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-clock text-purple-400"></i>
+                                Created
+                            </div>
+                        </th>
+                        <th class="px-6 py-4 text-left text-sm font-semibold text-white/90">
+                            Actions
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="notesTableBody">
+                    <c:forEach var="note" items="${medicalNotes}">
+                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td class="px-6 py-4">
+                                <span class="font-mono font-semibold text-white">
+                                    #${note.appointmentNumber}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                            ${note.patientName.substring(0, 1).toUpperCase()}
+                                    </div>
+                                    <span class="text-white font-medium">${note.patientName}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-white/70">
+                                    ${note.appointmentDate}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-white/70 max-w-xs truncate" title="${note.symptoms}">
+                                        ${note.symptoms}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-white/70 text-sm">
+                                    ${note.formattedCreatedAt}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=view&id=${note.id}"
+                                       class="w-8 h-8 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 rounded-lg transition flex items-center justify-center"
+                                       title="View Details">
+                                        <i class="fas fa-eye text-sm"></i>
+                                    </a>
+                                    <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=edit&id=${note.id}"
+                                       class="w-8 h-8 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 rounded-lg transition flex items-center justify-center"
+                                       title="Edit">
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </a>
+                                    <button onclick="confirmDelete('${note.id}', '${note.appointmentNumber}')"
+                                            class="w-8 h-8 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-lg transition flex items-center justify-center"
+                                            title="Delete">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </c:if>
 
     </div>
-</div>
+</main>
 
 <!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
-        <div class="mt-3">
-            <div class="flex items-center justify-center mb-4">
-                <i class="fas fa-exclamation-triangle text-red-500 text-5xl"></i>
+<div id="deleteModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 w-96">
+        <div class="bg-slate-800 border border-red-500/30 rounded-2xl shadow-2xl p-6">
+            <div class="flex items-center justify-center mb-6">
+                <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-red-400 text-3xl"></i>
+                </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">Delete Medical Note</h3>
-            <p class="text-sm text-gray-600 text-center mb-4">
-                Are you sure you want to delete the medical note for appointment <span id="deleteAppointmentNumber" class="font-semibold"></span>?
-                <br><span class="text-red-600">This action cannot be undone!</span>
+            <h3 class="text-xl font-bold text-white text-center mb-2">Delete Medical Note</h3>
+            <p class="text-white/70 text-center mb-4">
+                Delete medical note for appointment <span id="deleteAppointmentNumber" class="font-semibold text-red-400"></span>?
+                <br><span class="text-red-400 text-sm">This action cannot be undone!</span>
             </p>
 
             <form id="deleteForm" method="get" action="${pageContext.request.contextPath}/dashboard/medicalNotes">
@@ -225,11 +267,11 @@
                 <input type="hidden" id="deleteNoteId" name="id">
                 <div class="flex gap-3">
                     <button type="button" onclick="closeDeleteModal()"
-                            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-200">
+                            class="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg font-semibold transition">
                         <i class="fas fa-times mr-2"></i>Cancel
                     </button>
                     <button type="submit"
-                            class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                            class="flex-1 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-semibold transition">
                         <i class="fas fa-trash mr-2"></i>Delete
                     </button>
                 </div>
@@ -239,6 +281,24 @@
 </div>
 
 <script>
+    // Search functionality
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function() {
+            const searchValue = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#notesTableBody tr');
+
+            tableRows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(searchValue)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    }
+
     function confirmDelete(noteId, appointmentNumber) {
         document.getElementById('deleteNoteId').value = noteId;
         document.getElementById('deleteAppointmentNumber').textContent = '#' + appointmentNumber;
@@ -250,11 +310,12 @@
     }
 
     // Close modal when clicking outside
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
         if (e.target === this) {
             closeDeleteModal();
         }
     });
 </script>
+
 </body>
 </html>

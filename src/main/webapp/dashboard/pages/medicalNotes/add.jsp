@@ -1,203 +1,237 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Medical Note</title>
+    <title>Add Medical Note - MediCare+</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
-<div class="min-h-screen py-8">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+<body class="gradient-bg min-h-screen">
 
-        <!-- Header -->
-        <div class="mb-8">
-            <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
-               class="text-blue-600 hover:text-blue-800 font-semibold mb-4 inline-block">
-                <i class="fas fa-arrow-left mr-2"></i>Back to Medical Notes
-            </a>
-            <h1 class="text-3xl font-bold text-gray-900">Add Medical Note</h1>
-            <p class="mt-2 text-gray-600">Create a new medical record for a completed appointment</p>
-        </div>
+<!-- Définir la page active pour la sidebar -->
+<c:set var="currentPage" value="medical-notes" scope="request"/>
 
-        <!-- Error Message -->
-        <c:if test="${not empty sessionScope.errorMessage}">
-            <div class="mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md" role="alert">
-                <div class="flex items-center">
-                    <i class="fas fa-exclamation-circle mr-3 text-xl"></i>
-                    <p>${sessionScope.errorMessage}</p>
-                </div>
-            </div>
-            <c:remove var="errorMessage" scope="session"/>
-        </c:if>
+<!-- Include Sidebar Component -->
+<jsp:include page="/dashboard/components/sidebar.jsp"/>
 
-        <!-- Form Card -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-800">
-                <h3 class="text-lg font-semibold text-white">
-                    <i class="fas fa-file-medical mr-2"></i>Medical Note Information
-                </h3>
-            </div>
+<!-- Main Content -->
+<main id="mainContent" class="p-8 ml-64">
 
-            <form method="post" action="${pageContext.request.contextPath}/dashboard/medicalNotes" onsubmit="return validateForm()">
-                <input type="hidden" name="action" value="add">
-
-                <div class="px-6 py-6 space-y-6">
-
-                    <!-- Select Appointment -->
-                    <div>
-                        <label for="appointmentId" class="block text-sm font-medium text-gray-700 mb-2">
-                            Select Appointment <span class="text-red-600">*</span>
-                        </label>
-                        <c:choose>
-                            <c:when test="${empty appointments}">
-                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
-                                    <div class="flex">
-                                        <i class="fas fa-exclamation-triangle text-yellow-400 mt-1 mr-3"></i>
-                                        <div>
-                                            <p class="text-sm font-medium text-yellow-800">No Appointments Available</p>
-                                            <p class="text-sm text-yellow-700 mt-1">
-                                                All completed appointments already have medical notes.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:when>
-                            <c:otherwise>
-                                <select id="appointmentId" name="appointmentId" required onchange="showAppointmentDetails()"
-                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                    <option value="">-- Select an Appointment --</option>
-                                    <c:forEach var="appointment" items="${appointments}">
-                                        <option value="${appointment.id}"
-                                                data-patient="${appointment.patient.user.fullName}"
-                                                data-date="${appointment.appointmentDate}"
-                                                data-time="${appointment.startTime} - ${appointment.endTime}"
-                                                data-number="${appointment.appointmentNumber}">
-                                            #${appointment.appointmentNumber} - ${appointment.patient.user.fullName} - ${appointment.appointmentDate}
-                                        </option>
-                                    </c:forEach>
-                                </select>
-
-                                <!-- Appointment Details Preview -->
-                                <div id="appointmentDetails" class="hidden mt-3 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                    <h4 class="font-semibold text-blue-900 mb-2">
-                                        <i class="fas fa-info-circle mr-2"></i>Appointment Details
-                                    </h4>
-                                    <div class="grid grid-cols-2 gap-3 text-sm">
-                                        <div>
-                                            <p class="text-gray-600">Patient:</p>
-                                            <p class="font-semibold text-gray-900" id="detailPatient">-</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-gray-600">Appointment #:</p>
-                                            <p class="font-semibold text-gray-900" id="detailNumber">-</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-gray-600">Date:</p>
-                                            <p class="font-semibold text-gray-900" id="detailDate">-</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-gray-600">Time:</p>
-                                            <p class="font-semibold text-gray-900" id="detailTime">-</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-
-                    <!-- Symptoms -->
-                    <div>
-                        <label for="symptoms" class="block text-sm font-medium text-gray-700 mb-2">
-                            Symptoms <span class="text-red-600">*</span>
-                        </label>
-                        <textarea id="symptoms" name="symptoms" rows="4" required
-                                  placeholder="Describe the patient's symptoms (e.g., fever, cough, headache, etc.)"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                  oninput="updateCharCount('symptoms', 'symptomsCount', 1000)"></textarea>
-                        <div class="flex justify-between items-center mt-1">
-                            <p class="text-xs text-gray-500">
-                                <i class="fas fa-info-circle mr-1"></i>Be as specific as possible
-                            </p>
-                            <p class="text-xs text-gray-500">
-                                <span id="symptomsCount">0</span> / 1000 characters
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Prescription -->
-                    <div>
-                        <label for="prescription" class="block text-sm font-medium text-gray-700 mb-2">
-                            Prescription
-                        </label>
-                        <textarea id="prescription" name="prescription" rows="5"
-                                  placeholder="Enter prescribed medications, dosage, and instructions (Optional)"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                  oninput="updateCharCount('prescription', 'prescriptionCount', 2000)"></textarea>
-                        <div class="flex justify-between items-center mt-1">
-                            <p class="text-xs text-gray-500">
-                                <i class="fas fa-pills mr-1"></i>Include medication names, dosages, and duration
-                            </p>
-                            <p class="text-xs text-gray-500">
-                                <span id="prescriptionCount">0</span> / 2000 characters
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Additional Notes -->
-                    <div>
-                        <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">
-                            Additional Notes
-                        </label>
-                        <textarea id="notes" name="notes" rows="5"
-                                  placeholder="Any additional observations, recommendations, or follow-up instructions (Optional)"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                  oninput="updateCharCount('notes', 'notesCount', 2000)"></textarea>
-                        <div class="flex justify-between items-center mt-1">
-                            <p class="text-xs text-gray-500">
-                                <i class="fas fa-sticky-note mr-1"></i>Include follow-up recommendations or special instructions
-                            </p>
-                            <p class="text-xs text-gray-500">
-                                <span id="notesCount">0</span> / 2000 characters
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Info Box -->
-                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-                        <div class="flex">
-                            <i class="fas fa-lightbulb text-blue-400 mt-1 mr-3"></i>
-                            <div>
-                                <p class="text-sm font-medium text-blue-900">Important:</p>
-                                <ul class="mt-2 text-sm text-blue-700 list-disc list-inside space-y-1">
-                                    <li>Only completed appointments can have medical notes</li>
-                                    <li>Each appointment can only have one medical note</li>
-                                    <li>Symptoms field is required, others are optional</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="flex gap-4 pt-4">
-                        <button type="submit" ${empty appointments ? 'disabled' : ''}
-                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
-                            <i class="fas fa-save mr-2"></i>Save Medical Note
-                        </button>
-                        <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
-                           class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-lg shadow-lg text-center transition duration-200 transform hover:scale-105">
-                            <i class="fas fa-times mr-2"></i>Cancel
-                        </a>
-                    </div>
-                </div>
-            </form>
-        </div>
-
+    <!-- Page Header -->
+    <div class="mb-8">
+        <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
+           class="inline-flex items-center gap-2 text-white/80 hover:text-white font-medium mb-4 transition">
+            <i class="fas fa-arrow-left"></i>
+            Back to Medical Notes
+        </a>
+        <h1 class="text-3xl font-bold text-white mb-2">Add Medical Note</h1>
+        <p class="text-white/70">Create a new medical record for a completed appointment</p>
     </div>
-</div>
+
+    <!-- Error Message -->
+    <c:if test="${not empty sessionScope.errorMessage}">
+        <div class="mb-6 bg-red-500/20 backdrop-blur-lg border border-red-500/30 rounded-xl p-4">
+            <div class="flex items-center">
+                <i class="fas fa-exclamation-circle text-red-400 text-xl mr-3"></i>
+                <p class="text-red-300">${sessionScope.errorMessage}</p>
+            </div>
+        </div>
+        <c:remove var="errorMessage" scope="session"/>
+    </c:if>
+
+    <!-- Form Card -->
+    <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-8 max-w-5xl">
+
+        <form method="post" action="${pageContext.request.contextPath}/dashboard/medicalNotes" onsubmit="return validateForm()">
+            <input type="hidden" name="action" value="add">
+
+            <div class="space-y-6">
+
+                <!-- Select Appointment -->
+                <div>
+                    <label for="appointmentId" class="block text-sm font-medium text-white/90 mb-2">
+                        Select Appointment <span class="text-red-400">*</span>
+                    </label>
+                    <c:choose>
+                        <c:when test="${empty appointments}">
+                            <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                                <div class="flex gap-3">
+                                    <i class="fas fa-exclamation-triangle text-yellow-400 text-lg mt-1"></i>
+                                    <div>
+                                        <p class="text-sm font-semibold text-yellow-300 mb-1">No Appointments Available</p>
+                                        <p class="text-sm text-yellow-200/90">
+                                            All completed appointments already have medical notes.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <select id="appointmentId" name="appointmentId" required onchange="showAppointmentDetails()"
+                                    class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition text-white">
+                                <option value="">-- Select an Appointment --</option>
+                                <c:forEach var="appointment" items="${appointments}">
+                                    <option value="${appointment.id}"
+                                            data-patient="${appointment.patient.user.fullName}"
+                                            data-date="${appointment.appointmentDate}"
+                                            data-time="${appointment.startTime} - ${appointment.endTime}"
+                                            data-number="${appointment.appointmentNumber}">
+                                        #${appointment.appointmentNumber} - ${appointment.patient.user.fullName} - ${appointment.appointmentDate}
+                                    </option>
+                                </c:forEach>
+                            </select>
+
+                            <!-- Appointment Details Preview -->
+                            <div id="appointmentDetails" class="hidden mt-3 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                                <h4 class="font-semibold text-blue-300 mb-3 flex items-center gap-2">
+                                    <i class="fas fa-info-circle"></i>
+                                    Appointment Details
+                                </h4>
+                                <div class="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <p class="text-white/60 mb-1">Patient:</p>
+                                        <p class="font-semibold text-white" id="detailPatient">-</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-white/60 mb-1">Appointment #:</p>
+                                        <p class="font-semibold text-white" id="detailNumber">-</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-white/60 mb-1">Date:</p>
+                                        <p class="font-semibold text-white" id="detailDate">-</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-white/60 mb-1">Time:</p>
+                                        <p class="font-semibold text-white" id="detailTime">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
+
+                <!-- Symptoms -->
+                <div>
+                    <label for="symptoms" class="block text-sm font-medium text-white/90 mb-2">
+                        Symptoms <span class="text-red-400">*</span>
+                    </label>
+                    <textarea id="symptoms" name="symptoms" rows="4" required
+                              placeholder="Describe the patient's symptoms (e.g., fever, cough, headache, etc.)"
+                              class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition text-white placeholder-white/50 resize-none"
+                              oninput="updateCharCount('symptoms', 'symptomsCount', 1000)"></textarea>
+                    <div class="flex justify-between items-center mt-2">
+                        <p class="text-xs text-white/60">
+                            <i class="fas fa-info-circle mr-1"></i>Be as specific as possible
+                        </p>
+                        <p class="text-xs text-white/60">
+                            <span id="symptomsCount">0</span> / 1000 characters
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Prescription -->
+                <div>
+                    <label for="prescription" class="block text-sm font-medium text-white/90 mb-2">
+                        Prescription
+                    </label>
+                    <textarea id="prescription" name="prescription" rows="5"
+                              placeholder="Enter prescribed medications, dosage, and instructions (Optional)"
+                              class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition text-white placeholder-white/50 resize-none"
+                              oninput="updateCharCount('prescription', 'prescriptionCount', 2000)"></textarea>
+                    <div class="flex justify-between items-center mt-2">
+                        <p class="text-xs text-white/60">
+                            <i class="fas fa-pills mr-1"></i>Include medication names, dosages, and duration
+                        </p>
+                        <p class="text-xs text-white/60">
+                            <span id="prescriptionCount">0</span> / 2000 characters
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Additional Notes -->
+                <div>
+                    <label for="notes" class="block text-sm font-medium text-white/90 mb-2">
+                        Additional Notes
+                    </label>
+                    <textarea id="notes" name="notes" rows="5"
+                              placeholder="Any additional observations, recommendations, or follow-up instructions (Optional)"
+                              class="w-full px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg focus:ring-2 focus:ring-purple-400 focus:border-purple-400 outline-none transition text-white placeholder-white/50 resize-none"
+                              oninput="updateCharCount('notes', 'notesCount', 2000)"></textarea>
+                    <div class="flex justify-between items-center mt-2">
+                        <p class="text-xs text-white/60">
+                            <i class="fas fa-sticky-note mr-1"></i>Include follow-up recommendations or special instructions
+                        </p>
+                        <p class="text-xs text-white/60">
+                            <span id="notesCount">0</span> / 2000 characters
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Info Box -->
+                <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
+                    <div class="flex gap-3">
+                        <i class="fas fa-lightbulb text-blue-400 text-lg mt-1"></i>
+                        <div>
+                            <p class="text-sm font-semibold text-blue-300 mb-2">Important:</p>
+                            <ul class="text-sm text-blue-200/90 space-y-1">
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-xs mt-1"></i>
+                                    <span>Only completed appointments can have medical notes</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-xs mt-1"></i>
+                                    <span>Each appointment can only have one medical note</span>
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <i class="fas fa-check text-xs mt-1"></i>
+                                    <span>Symptoms field is required, others are optional</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" ${empty appointments ? 'disabled' : ''}
+                            class="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold transition shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-save"></i>
+                        Save Medical Note
+                    </button>
+                    <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
+                       class="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</main>
 
 <script>
     function showAppointmentDetails() {
@@ -257,5 +291,6 @@
         updateCharCount('notes', 'notesCount', 2000);
     });
 </script>
+
 </body>
 </html>

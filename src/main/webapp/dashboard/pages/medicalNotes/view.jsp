@@ -1,238 +1,273 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Medical Note</title>
+    <title>View Medical Note - MediCare+</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        @media print {
+            body { background: white; }
+            .no-print { display: none !important; }
+            .shadow-lg, .shadow-md { box-shadow: none !important; }
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
-<div class="min-h-screen py-8">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+<body class="gradient-bg min-h-screen">
 
-        <!-- Header -->
-        <div class="mb-8">
-            <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
-               class="text-blue-600 hover:text-blue-800 font-semibold mb-4 inline-block">
-                <i class="fas fa-arrow-left mr-2"></i>Back to Medical Notes
-            </a>
-            <div class="flex justify-between items-start">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Medical Note Details</h1>
-                    <p class="mt-2 text-gray-600">Complete medical record information</p>
-                </div>
-                <div class="flex gap-3">
-                    <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=edit&id=${medicalNote.id}"
-                       class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition duration-200">
-                        <i class="fas fa-edit mr-2"></i>Edit
-                    </a>
-                </div>
+<!-- Définir la page active pour la sidebar -->
+<c:set var="currentPage" value="medical-notes" scope="request"/>
+
+<!-- Include Sidebar Component -->
+<jsp:include page="/dashboard/components/sidebar.jsp"/>
+
+<!-- Main Content -->
+<main id="mainContent" class="p-8 ml-64">
+
+    <!-- Page Header -->
+    <div class="mb-8 no-print">
+        <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
+           class="inline-flex items-center gap-2 text-white/80 hover:text-white font-medium mb-4 transition">
+            <i class="fas fa-arrow-left"></i>
+            Back to Medical Notes
+        </a>
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-3xl font-bold text-white mb-2">Medical Note Details</h1>
+                <p class="text-white/70">Complete medical record information</p>
             </div>
+            <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=edit&id=${medicalNote.id}"
+               class="px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-lg font-medium transition shadow-lg shadow-emerald-600/30 flex items-center gap-2">
+                <i class="fas fa-edit"></i>
+                Edit
+            </a>
         </div>
+    </div>
 
-        <!-- Main Card -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-
-            <!-- Header Section -->
-            <div class="px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-800">
+    <div class="max-w-5xl">
+        <!-- Header Card -->
+        <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl overflow-hidden mb-6">
+            <div class="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 px-6 py-4">
                 <div class="flex justify-between items-center text-white">
                     <div>
                         <h2 class="text-xl font-bold">Medical Note #${medicalNote.id}</h2>
-                        <p class="text-sm text-blue-100 mt-1">
+                        <p class="text-sm text-purple-100 mt-1">
                             <i class="fas fa-calendar mr-2"></i>
                             Created: ${medicalNote.formattedCreatedAt}
                         </p>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm text-blue-100">Appointment</p>
+                        <p class="text-sm text-purple-100">Appointment</p>
                         <p class="text-2xl font-bold">#${medicalNote.appointmentNumber}</p>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Appointment Information -->
-            <div class="px-6 py-6 bg-gray-50 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">
-                    <i class="fas fa-info-circle mr-2 text-blue-600"></i>Appointment Information
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Patient -->
-                    <div class="bg-white p-4 rounded-lg border-l-4 border-blue-500 shadow-sm">
-                        <div class="flex items-center mb-2">
-                            <i class="fas fa-user text-blue-600 text-2xl mr-3"></i>
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase">Patient</p>
-                                <p class="text-lg font-semibold text-gray-900">${medicalNote.patientName}</p>
-                            </div>
+        <!-- Appointment Information Card -->
+        <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-6 mb-6">
+            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-info-circle text-blue-400"></i>
+                Appointment Information
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Patient -->
+                <div class="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/30 rounded-xl p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-user text-blue-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-white/60 uppercase">Patient</p>
+                            <p class="text-base font-semibold text-white">${medicalNote.patientName}</p>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Doctor -->
-                    <div class="bg-white p-4 rounded-lg border-l-4 border-green-500 shadow-sm">
-                        <div class="flex items-center mb-2">
-                            <i class="fas fa-user-md text-green-600 text-2xl mr-3"></i>
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase">Doctor</p>
-                                <p class="text-lg font-semibold text-gray-900">Dr. ${medicalNote.doctorName}</p>
-                            </div>
+                <!-- Doctor -->
+                <div class="bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/30 rounded-xl p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-user-md text-emerald-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-white/60 uppercase">Doctor</p>
+                            <p class="text-base font-semibold text-white">Dr. ${medicalNote.doctorName}</p>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Date -->
-                    <div class="bg-white p-4 rounded-lg border-l-4 border-purple-500 shadow-sm">
-                        <div class="flex items-center mb-2">
-                            <i class="fas fa-calendar-alt text-purple-600 text-2xl mr-3"></i>
-                            <div>
-                                <p class="text-xs text-gray-500 uppercase">Appointment Date</p>
-                                <p class="text-lg font-semibold text-gray-900">${medicalNote.appointmentDate}</p>
-                            </div>
+                <!-- Date -->
+                <div class="bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/30 rounded-xl p-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-calendar-alt text-purple-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-white/60 uppercase">Date</p>
+                            <p class="text-base font-semibold text-white">${medicalNote.appointmentDate}</p>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Medical Information -->
-            <div class="px-6 py-6">
-                <h3 class="text-lg font-semibold text-gray-900 mb-6">
-                    <i class="fas fa-notes-medical mr-2 text-red-600"></i>Medical Information
-                </h3>
+        <!-- Medical Information Card -->
+        <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-6 mb-6">
+            <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <i class="fas fa-notes-medical text-red-400"></i>
+                Medical Information
+            </h3>
 
-                <div class="space-y-6">
-                    <!-- Symptoms -->
-                    <div class="bg-red-50 rounded-lg p-5 border-l-4 border-red-500">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <div class="bg-red-100 rounded-full p-3">
-                                    <i class="fas fa-heartbeat text-red-600 text-xl"></i>
-                                </div>
-                            </div>
-                            <div class="ml-4 flex-1">
-                                <h4 class="text-lg font-semibold text-red-900 mb-2">
-                                    Symptoms
-                                    <span class="ml-2 text-xs bg-red-200 text-red-800 px-2 py-1 rounded-full">Required</span>
-                                </h4>
-                                <div class="text-gray-800 whitespace-pre-wrap leading-relaxed">
-                                    ${medicalNote.symptoms}
-                                </div>
-                            </div>
+            <div class="space-y-4">
+                <!-- Symptoms -->
+                <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-5">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-red-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-heartbeat text-red-400 text-xl"></i>
                         </div>
-                    </div>
-
-                    <!-- Prescription -->
-                    <div class="bg-green-50 rounded-lg p-5 border-l-4 border-green-500">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <div class="bg-green-100 rounded-full p-3">
-                                    <i class="fas fa-pills text-green-600 text-xl"></i>
-                                </div>
-                            </div>
-                            <div class="ml-4 flex-1">
-                                <h4 class="text-lg font-semibold text-green-900 mb-2">Prescription</h4>
-                                <c:choose>
-                                    <c:when test="${not empty medicalNote.prescription}">
-                                        <div class="text-gray-800 whitespace-pre-wrap leading-relaxed">
-                                                ${medicalNote.prescription}
-                                        </div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <p class="text-gray-500 italic">No prescription provided</p>
-                                    </c:otherwise>
-                                </c:choose>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Additional Notes -->
-                    <div class="bg-blue-50 rounded-lg p-5 border-l-4 border-blue-500">
-                        <div class="flex items-start">
-                            <div class="flex-shrink-0">
-                                <div class="bg-blue-100 rounded-full p-3">
-                                    <i class="fas fa-sticky-note text-blue-600 text-xl"></i>
-                                </div>
-                            </div>
-                            <div class="ml-4 flex-1">
-                                <h4 class="text-lg font-semibold text-blue-900 mb-2">Additional Notes</h4>
-                                <c:choose>
-                                    <c:when test="${not empty medicalNote.notes}">
-                                        <div class="text-gray-800 whitespace-pre-wrap leading-relaxed">
-                                                ${medicalNote.notes}
-                                        </div>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <p class="text-gray-500 italic">No additional notes</p>
-                                    </c:otherwise>
-                                </c:choose>
+                        <div class="flex-1">
+                            <h4 class="text-base font-semibold text-red-300 mb-2 flex items-center gap-2">
+                                Symptoms
+                                <span class="text-[10px] bg-red-500/30 text-red-200 px-2 py-0.5 rounded-full">Required</span>
+                            </h4>
+                            <div class="text-white/90 whitespace-pre-wrap leading-relaxed text-sm">
+                                ${medicalNote.symptoms}
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Footer with Metadata -->
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                <div class="flex justify-between items-center text-sm text-gray-600">
-                    <div>
-                        <i class="fas fa-clock mr-2"></i>
-                        Created: <span class="font-semibold">
-                        ${medicalNote.createdAt}
-                    </span>
+                <!-- Prescription -->
+                <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-5">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-pills text-emerald-400 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-base font-semibold text-emerald-300 mb-2">Prescription</h4>
+                            <c:choose>
+                                <c:when test="${not empty medicalNote.prescription}">
+                                    <div class="text-white/90 whitespace-pre-wrap leading-relaxed text-sm">
+                                            ${medicalNote.prescription}
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <p class="text-white/50 italic text-sm">No prescription provided</p>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
-                    <div>
-                        <i class="fas fa-fingerprint mr-2"></i>
-                        Medical Note ID: <span class="font-mono font-semibold">${medicalNote.id}</span>
+                </div>
+
+                <!-- Additional Notes -->
+                <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-5">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-sticky-note text-blue-400 text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-base font-semibold text-blue-300 mb-2">Additional Notes</h4>
+                            <c:choose>
+                                <c:when test="${not empty medicalNote.notes}">
+                                    <div class="text-white/90 whitespace-pre-wrap leading-relaxed text-sm">
+                                            ${medicalNote.notes}
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <p class="text-white/50 italic text-sm">No additional notes</p>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metadata Footer -->
+        <div class="bg-slate-800/40 backdrop-blur-lg border border-white/10 rounded-2xl shadow-xl p-4 mb-6">
+            <div class="flex justify-between items-center text-sm text-white/70">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-clock"></i>
+                    <span>Created: <span class="font-semibold text-white">${medicalNote.createdAt}</span></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-fingerprint"></i>
+                    <span>ID: <span class="font-mono font-semibold text-white">${medicalNote.id}</span></span>
                 </div>
             </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="mt-6 flex gap-4">
+        <div class="flex gap-3 mb-6 no-print">
             <a href="${pageContext.request.contextPath}/dashboard/medicalNotes?action=edit&id=${medicalNote.id}"
-               class="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg text-center transition duration-200 transform hover:scale-105">
-                <i class="fas fa-edit mr-2"></i>Edit Medical Note
+               class="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-lg font-semibold transition shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2">
+                <i class="fas fa-edit"></i>
+                Edit Medical Note
             </a>
             <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
-               class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg text-center transition duration-200 transform hover:scale-105">
-                <i class="fas fa-list mr-2"></i>Back to List
+               class="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-white rounded-lg font-semibold transition flex items-center justify-center gap-2">
+                <i class="fas fa-list"></i>
+                Back to List
             </a>
             <button onclick="confirmDelete()"
-                    class="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition duration-200 transform hover:scale-105">
-                <i class="fas fa-trash mr-2"></i>Delete Medical Note
+                    class="flex-1 px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-semibold transition shadow-lg shadow-red-600/30 flex items-center justify-center gap-2">
+                <i class="fas fa-trash"></i>
+                Delete
             </button>
         </div>
 
         <!-- Info Footer -->
-        <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <div class="flex items-start">
-                <i class="fas fa-info-circle text-blue-500 text-xl mt-1 mr-3"></i>
+        <div class="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 no-print">
+            <div class="flex gap-3">
+                <i class="fas fa-info-circle text-blue-400 text-lg mt-1"></i>
                 <div>
-                    <p class="text-sm font-medium text-blue-900">Medical Record Information</p>
-                    <p class="text-sm text-blue-700 mt-1">
+                    <p class="text-sm font-semibold text-blue-300 mb-1">Medical Record Information</p>
+                    <p class="text-sm text-blue-200/90">
                         This medical note is a confidential record of the patient's consultation.
                         All information should be kept secure and only shared with authorized medical personnel.
                     </p>
                 </div>
             </div>
         </div>
-
     </div>
-</div>
+
+</main>
 
 <!-- Delete Confirmation Modal -->
-<div id="deleteModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-lg bg-white">
-        <div class="mt-3">
-            <div class="flex items-center justify-center mb-4">
-                <i class="fas fa-exclamation-triangle text-red-500 text-5xl"></i>
+<div id="deleteModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 w-96">
+        <div class="bg-slate-800 border border-red-500/30 rounded-2xl shadow-2xl p-6">
+            <div class="flex items-center justify-center mb-6">
+                <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-red-400 text-3xl"></i>
+                </div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">Delete Medical Note</h3>
-            <p class="text-sm text-gray-600 text-center mb-4">
+            <h3 class="text-xl font-bold text-white text-center mb-2">Delete Medical Note</h3>
+            <p class="text-white/70 text-center mb-4 text-sm">
                 Are you sure you want to delete this medical note?
-                <br><span class="text-red-600 font-semibold">This action cannot be undone!</span>
+                <br><span class="text-red-400 font-semibold">This action cannot be undone!</span>
             </p>
 
             <form method="get" action="${pageContext.request.contextPath}/dashboard/medicalNotes">
@@ -240,11 +275,11 @@
                 <input type="hidden" name="id" value="${medicalNote.id}">
                 <div class="flex gap-3">
                     <button type="button" onclick="closeDeleteModal()"
-                            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition duration-200">
+                            class="flex-1 py-3 bg-white/10 hover:bg-white/20 text-white rounded-lg font-semibold transition">
                         <i class="fas fa-times mr-2"></i>Cancel
                     </button>
                     <button type="submit"
-                            class="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-200">
+                            class="flex-1 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white rounded-lg font-semibold transition">
                         <i class="fas fa-trash mr-2"></i>Delete
                     </button>
                 </div>
@@ -263,39 +298,12 @@
     }
 
     // Close modal when clicking outside
-    document.getElementById('deleteModal').addEventListener('click', function(e) {
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
         if (e.target === this) {
             closeDeleteModal();
         }
     });
-
-    // Print styles
-    window.addEventListener('beforeprint', function() {
-        document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
-    });
-
-    window.addEventListener('afterprint', function() {
-        document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
-    });
 </script>
 
-<!-- Print Styles -->
-<style>
-    @media print {
-        body {
-            background: white;
-        }
-        .no-print,
-        button,
-        a[href*="edit"],
-        a[href*="Back"] {
-            display: none !important;
-        }
-        .shadow-lg,
-        .shadow-md {
-            box-shadow: none !important;
-        }
-    }
-</style>
 </body>
 </html>

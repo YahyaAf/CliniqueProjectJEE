@@ -275,8 +275,8 @@
 
             <li class="nav-item">
                 <a href="${pageContext.request.contextPath}/admin/list-users"
-                   class="nav-link ${currentPage == 'patients' ? 'active' : ''}"
-                   data-tooltip="Patients">
+                   class="nav-link ${currentPage == 'users' ? 'active' : ''}"
+                   data-tooltip="Users">
                     <i class="fas fa-users nav-icon"></i>
                     <span class="nav-text">Users</span>
                 </a>
@@ -310,7 +310,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/appointments"
+                <a href="${pageContext.request.contextPath}/dashboard/appointments/list"
                    class="nav-link ${currentPage == 'appointments' ? 'active' : ''}"
                    data-tooltip="Rendez-vous">
                     <i class="fas fa-calendar-check nav-icon"></i>
@@ -319,7 +319,7 @@
             </li>
 
             <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/medical-records"
+                <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
                    class="nav-link ${currentPage == 'records' ? 'active' : ''}"
                    data-tooltip="Dossiers">
                     <i class="fas fa-file-medical-alt nav-icon"></i>
@@ -346,15 +346,6 @@
             </li>
 
             <li class="nav-divider"></li>
-
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/settings"
-                   class="nav-link ${currentPage == 'settings' ? 'active' : ''}"
-                   data-tooltip="Paramètres">
-                    <i class="fas fa-cog nav-icon"></i>
-                    <span class="nav-text">Paramètres</span>
-                </a>
-            </li>
 
             <li class="nav-item">
                 <a href="${pageContext.request.contextPath}/logout"
