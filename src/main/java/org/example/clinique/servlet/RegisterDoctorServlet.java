@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.clinique.dto.DoctorRegisterRequestDTO;
 import org.example.clinique.dto.SpecialiteResponseDTO;
+import org.example.clinique.dto.UserResponseLoginDTO;
 import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AuthService;
 import org.example.clinique.validator.DoctorValidator;
@@ -35,6 +36,19 @@ public class RegisterDoctorServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect("/clinique/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"ADMIN".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         List<SpecialiteResponseDTO> specialites  = authService.getAllSpecialites();
         req.setAttribute("specialites", specialites);
         req.getRequestDispatcher("/dashboard/pages/doctors/registerDoctor.jsp").forward(req, resp);

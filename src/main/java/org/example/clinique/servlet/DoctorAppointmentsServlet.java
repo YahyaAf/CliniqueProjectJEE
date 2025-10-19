@@ -48,6 +48,12 @@ public class DoctorAppointmentsServlet extends HttpServlet {
             return;
         }
 
+        if (!"DOCTOR".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         UUID userId = currentUser.getId();
         Optional<DoctorResponseDTO> doctorOpt = authService.getDoctorByUserId(userId);
 

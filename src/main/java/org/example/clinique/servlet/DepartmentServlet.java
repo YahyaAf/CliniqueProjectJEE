@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.clinique.dto.DepartmentRequestDTO;
 import org.example.clinique.dto.DepartmentResponseDTO;
+import org.example.clinique.dto.UserResponseLoginDTO;
 import org.example.clinique.model.Department;
 import org.example.clinique.repository.implementation.DepartmentRepositoryImpl;
 import org.example.clinique.service.DepartmentService;
@@ -25,6 +26,19 @@ public class DepartmentServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect("/clinique/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"ADMIN".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         String action = req.getParameter("action");
 
         if (action == null) action = "list";
@@ -52,6 +66,19 @@ public class DepartmentServlet extends HttpServlet {
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect("/clinique/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"ADMIN".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         String action = req.getParameter("action");
 
         if ("add".equals(action)) {

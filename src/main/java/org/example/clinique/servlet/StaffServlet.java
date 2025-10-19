@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.clinique.dto.StaffResponseDTO;
+import org.example.clinique.dto.UserResponseLoginDTO;
 import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AuthService;
 
@@ -29,6 +30,19 @@ public class StaffServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect("/clinique/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"ADMIN".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         List<StaffResponseDTO> allStaff = authService.getAllStaffs();
         List<StaffResponseDTO> activeStaff = allStaff.stream()
                 .filter(StaffResponseDTO::getIsActive)

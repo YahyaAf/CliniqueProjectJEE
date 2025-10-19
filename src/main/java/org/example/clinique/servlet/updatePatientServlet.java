@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.clinique.dto.PatientRegisterRequestDTO;
+import org.example.clinique.dto.UserResponseLoginDTO;
 import org.example.clinique.model.enums.BloodType;
 import org.example.clinique.model.enums.Gender;
 import org.example.clinique.repository.implementation.*;
@@ -37,6 +38,19 @@ public class updatePatientServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect("/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"ADMIN".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/");
+            return;
+        }
+
         String idParam = req.getParameter("id");
         if(idParam != null && !idParam.isEmpty()){
             UUID patiendId = UUID.fromString(idParam);
@@ -47,6 +61,19 @@ public class updatePatientServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect("/clinique/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"ADMIN".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         String idParam = req.getParameter("id");
         if(idParam == null || idParam.isEmpty()){
             resp.sendRedirect(req.getContextPath() + "/admin/patients");

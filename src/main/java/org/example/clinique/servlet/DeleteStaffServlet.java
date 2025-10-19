@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.example.clinique.dto.UserResponseLoginDTO;
 import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AuthService;
 
@@ -28,6 +29,19 @@ public class DeleteStaffServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect("/clinique/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"ADMIN".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         String idParam = req.getParameter("id");
         if(idParam != null && !idParam.isEmpty()){
             UUID staffId = UUID.fromString(idParam);

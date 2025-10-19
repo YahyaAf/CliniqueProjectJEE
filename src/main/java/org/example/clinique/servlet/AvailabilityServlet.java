@@ -50,6 +50,12 @@ public class AvailabilityServlet extends HttpServlet {
             return;
         }
 
+        if (!"DOCTOR".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         UUID userId = currentUser.getId();
         Optional<DoctorResponseDTO> doctorOpt = authService.getDoctorByUserId(userId);
 
@@ -97,6 +103,19 @@ public class AvailabilityServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect(req.getContextPath() + "/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"DOCTOR".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         String action = req.getParameter("action");
 
         if ("add".equals(action)) {

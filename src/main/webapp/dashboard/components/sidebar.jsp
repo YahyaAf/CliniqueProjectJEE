@@ -1,5 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:if test="${empty sessionScope.currentUser}">
+    <c:redirect url="/pages/auth/login.jsp"/>
+</c:if>
 
 <style>
     :root {
@@ -264,8 +267,10 @@
     <!-- Navigation -->
     <nav class="sidebar-nav">
         <ul style="list-style: none; padding: 0; margin: 0;">
+
+            <%-- ✅ Dashboard - ALL ROLES --%>
             <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/dashboard/home.jsp"
+                <a href="/clinique/dashboard/home.jsp"
                    class="nav-link ${currentPage == 'dashboard' ? 'active' : ''}"
                    data-tooltip="Dashboard">
                     <i class="fas fa-home nav-icon"></i>
@@ -273,82 +278,107 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/admin/list-users"
-                   class="nav-link ${currentPage == 'users' ? 'active' : ''}"
-                   data-tooltip="Users">
-                    <i class="fas fa-users nav-icon"></i>
-                    <span class="nav-text">Users</span>
-                </a>
-            </li>
+            <%-- ✅ ADMIN ONLY - Users --%>
+            <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                <li class="nav-item">
+                    <a href="/clinique/admin/list-users"
+                       class="nav-link ${currentPage == 'users' ? 'active' : ''}"
+                       data-tooltip="Users">
+                        <i class="fas fa-users nav-icon"></i>
+                        <span class="nav-text">Users</span>
+                    </a>
+                </li>
+            </c:if>
 
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/admin/patients"
-                   class="nav-link ${currentPage == 'patients' ? 'active' : ''}"
-                   data-tooltip="Patients">
-                    <i class="fas fa-users nav-icon"></i>
-                    <span class="nav-text">Patients</span>
-                </a>
-            </li>
+            <%-- ✅ ADMIN ONLY - Patients --%>
+            <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                <li class="nav-item">
+                    <a href="/clinique/admin/patients"
+                       class="nav-link ${currentPage == 'patients' ? 'active' : ''}"
+                       data-tooltip="Patients">
+                        <i class="fas fa-users nav-icon"></i>
+                        <span class="nav-text">Patients</span>
+                    </a>
+                </li>
+            </c:if>
 
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/admin/doctors"
-                   class="nav-link ${currentPage == 'doctors' ? 'active' : ''}"
-                   data-tooltip="Docteurs">
-                    <i class="fas fa-user-md nav-icon"></i>
-                    <span class="nav-text">Docteurs</span>
-                </a>
-            </li>
+            <%-- ✅ ADMIN ONLY - Docteurs --%>
+            <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                <li class="nav-item">
+                    <a href="/clinique/admin/doctors"
+                       class="nav-link ${currentPage == 'doctors' ? 'active' : ''}"
+                       data-tooltip="Docteurs">
+                        <i class="fas fa-user-md nav-icon"></i>
+                        <span class="nav-text">Docteurs</span>
+                    </a>
+                </li>
+            </c:if>
 
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/admin/staff"
-                   class="nav-link ${currentPage == 'staff' ? 'active' : ''}"
-                   data-tooltip="Personnel">
-                    <i class="fas fa-user-nurse nav-icon"></i>
-                    <span class="nav-text">Personnel</span>
-                </a>
-            </li>
+            <%-- ✅ ADMIN ONLY - Personnel --%>
+            <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                <li class="nav-item">
+                    <a href="/clinique/admin/staff"
+                       class="nav-link ${currentPage == 'staff' ? 'active' : ''}"
+                       data-tooltip="Personnel">
+                        <i class="fas fa-user-nurse nav-icon"></i>
+                        <span class="nav-text">Personnel</span>
+                    </a>
+                </li>
+            </c:if>
 
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/dashboard/appointments/list"
-                   class="nav-link ${currentPage == 'appointments' ? 'active' : ''}"
-                   data-tooltip="Rendez-vous">
-                    <i class="fas fa-calendar-check nav-icon"></i>
-                    <span class="nav-text">Rendez-vous</span>
-                </a>
-            </li>
+            <%-- ✅ DOCTOR ONLY - Rendez-vous --%>
+            <c:if test="${sessionScope.currentUser.role == 'DOCTOR'}">
+                <li class="nav-item">
+                    <a href="/clinique/dashboard/appointments/list"
+                       class="nav-link ${currentPage == 'appointments' ? 'active' : ''}"
+                       data-tooltip="Rendez-vous">
+                        <i class="fas fa-calendar-check nav-icon"></i>
+                        <span class="nav-text">Rendez-vous</span>
+                    </a>
+                </li>
+            </c:if>
 
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
-                   class="nav-link ${currentPage == 'records' ? 'active' : ''}"
-                   data-tooltip="Dossiers">
-                    <i class="fas fa-file-medical-alt nav-icon"></i>
-                    <span class="nav-text">Dossiers Médicaux</span>
-                </a>
-            </li>
+            <%-- ✅ DOCTOR ONLY - Dossiers Médicaux --%>
+            <c:if test="${sessionScope.currentUser.role == 'DOCTOR'}">
+                <li class="nav-item">
+                    <a href="/clinique/dashboard/medicalNotes"
+                       class="nav-link ${currentPage == 'records' ? 'active' : ''}"
+                       data-tooltip="Dossiers">
+                        <i class="fas fa-file-medical-alt nav-icon"></i>
+                        <span class="nav-text">Dossiers Médicaux</span>
+                    </a>
+                </li>
+            </c:if>
 
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/admin/departments"
-                   class="nav-link ${currentPage == 'departments' ? 'active' : ''}"
-                   data-tooltip="Départements">
-                    <i class="fas fa-building nav-icon"></i>
-                    <span class="nav-text">Départements</span>
-                </a>
-            </li>
+            <%-- ✅ ADMIN ONLY - Départements --%>
+            <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                <li class="nav-item">
+                    <a href="/clinique/admin/departments"
+                       class="nav-link ${currentPage == 'departments' ? 'active' : ''}"
+                       data-tooltip="Départements">
+                        <i class="fas fa-building nav-icon"></i>
+                        <span class="nav-text">Départements</span>
+                    </a>
+                </li>
+            </c:if>
 
-            <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/admin/specialites"
-                   class="nav-link ${currentPage == 'specialites' ? 'active' : ''}"
-                   data-tooltip="Spécialités">
-                    <i class="fas fa-stethoscope nav-icon"></i>
-                    <span class="nav-text">Spécialités</span>
-                </a>
-            </li>
+            <%-- ✅ ADMIN ONLY - Spécialités --%>
+            <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                <li class="nav-item">
+                    <a href="/clinique/admin/specialites"
+                       class="nav-link ${currentPage == 'specialites' ? 'active' : ''}"
+                       data-tooltip="Spécialités">
+                        <i class="fas fa-stethoscope nav-icon"></i>
+                        <span class="nav-text">Spécialités</span>
+                    </a>
+                </li>
+            </c:if>
 
             <li class="nav-divider"></li>
 
+            <%-- ✅ Déconnexion - ALL ROLES --%>
             <li class="nav-item">
-                <a href="${pageContext.request.contextPath}/logout"
+                <a href="/clinique/logout"
                    class="nav-link logout"
                    data-tooltip="Déconnexion">
                     <i class="fas fa-sign-out-alt nav-icon"></i>

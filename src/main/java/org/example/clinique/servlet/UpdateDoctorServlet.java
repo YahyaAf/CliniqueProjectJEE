@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.example.clinique.dto.DoctorRegisterRequestDTO;
+import org.example.clinique.dto.UserResponseLoginDTO;
 import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AuthService;
 import org.example.clinique.validator.DoctorValidator;
@@ -34,6 +35,19 @@ public class UpdateDoctorServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect("/clinique/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"ADMIN".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         String idParam = req.getParameter("id");
         if (idParam != null && !idParam.isEmpty()) {
             UUID doctorId = UUID.fromString(idParam);
@@ -47,6 +61,19 @@ public class UpdateDoctorServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
+
+        if (currentUser == null) {
+            resp.sendRedirect("/clinique/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"ADMIN".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         String idParam = req.getParameter("id");
         if (idParam == null || idParam.isEmpty()) {
             resp.sendRedirect(req.getContextPath() + "/admin/doctors");

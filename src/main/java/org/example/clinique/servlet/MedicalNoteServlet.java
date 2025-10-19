@@ -50,6 +50,12 @@ public class MedicalNoteServlet extends HttpServlet {
             return;
         }
 
+        if (!"DOCTOR".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         UUID userId = currentUser.getId();
         Optional<DoctorResponseDTO> doctorOpt = authService.getDoctorByUserId(userId);
 
@@ -98,6 +104,12 @@ public class MedicalNoteServlet extends HttpServlet {
 
         if (currentUser == null) {
             resp.sendRedirect(req.getContextPath() + "/pages/auth/login.jsp");
+            return;
+        }
+
+        if (!"DOCTOR".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
             return;
         }
 

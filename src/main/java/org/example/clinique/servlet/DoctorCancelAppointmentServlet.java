@@ -30,6 +30,12 @@ public class DoctorCancelAppointmentServlet extends HttpServlet {
             return;
         }
 
+        if (!"DOCTOR".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Admins only.");
+            resp.sendRedirect("/clinique/");
+            return;
+        }
+
         try {
             String appointmentIdStr = req.getParameter("appointmentId");
             String reason = req.getParameter("reason");
