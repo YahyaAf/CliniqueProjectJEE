@@ -23,7 +23,11 @@
                 <a href="${pageContext.request.contextPath}/" class="text-sm hover:text-teal-400 transition-colors font-medium">Accueil</a>
                 <a href="${pageContext.request.contextPath}/#services" class="text-sm hover:text-teal-400 transition-colors font-medium">Services</a>
                 <a href="${pageContext.request.contextPath}/#doctors" class="text-sm hover:text-teal-400 transition-colors font-medium">Nos Docteurs</a>
-                <a href="${pageContext.request.contextPath}/appointments/calendar" class="text-sm hover:text-teal-400 transition-colors font-medium">Calendar</a>
+
+                <%-- ✅ Calendar - PATIENT only + Authenticated --%>
+                <c:if test="${not empty sessionScope.currentUser && sessionScope.currentUser.role == 'PATIENT'}">
+                    <a href="${pageContext.request.contextPath}/appointments/calendar" class="text-sm hover:text-teal-400 transition-colors font-medium">Calendar</a>
+                </c:if>
             </div>
 
             <!-- User Profile / Auth Buttons - Compact -->
@@ -61,37 +65,73 @@
                                     <p class="text-xs font-semibold text-gray-800 truncate">${sessionScope.currentUser.fullName}</p>
                                     <p class="text-[10px] text-gray-600 mt-0.5 truncate">${sessionScope.currentUser.email}</p>
                                     <c:if test="${not empty sessionScope.currentUser.role}">
-                                        <span class="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-medium bg-teal-600 text-white rounded-full">
+                                        <span class="inline-block mt-1.5 px-2 py-0.5 text-[10px] font-medium
+                                              ${sessionScope.currentUser.role == 'PATIENT' ? 'bg-teal-600' :
+                                                sessionScope.currentUser.role == 'DOCTOR' ? 'bg-blue-600' : 'bg-purple-600'}
+                                              text-white rounded-full">
                                                 ${sessionScope.currentUser.role}
                                         </span>
                                     </c:if>
                                 </div>
 
-                                <!-- Menu Items - Compact -->
+                                <!-- Menu Items - Dynamic based on Role -->
                                 <div class="py-1.5">
-                                    <a href="${pageContext.request.contextPath}/patient/update-profile"
-                                       class="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors group">
-                                        <svg class="w-4 h-4 mr-2 text-gray-400 group-hover:text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                        </svg>
-                                        Mon Profile
-                                    </a>
+                                        <%-- ✅ PATIENT Menu Items --%>
+                                    <c:if test="${sessionScope.currentUser.role == 'PATIENT'}">
+                                        <a href="${pageContext.request.contextPath}/patient/update-profile"
+                                           class="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors group">
+                                            <svg class="w-4 h-4 mr-2 text-gray-400 group-hover:text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                            </svg>
+                                            Mon Profile
+                                        </a>
 
-                                    <a href="${pageContext.request.contextPath}/pages/appointments/list"
-                                       class="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors group">
-                                        <svg class="w-4 h-4 mr-2 text-gray-400 group-hover:text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                        Mes Rendez-vous
-                                    </a>
+                                        <a href="${pageContext.request.contextPath}/pages/appointments/list"
+                                           class="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors group">
+                                            <svg class="w-4 h-4 mr-2 text-gray-400 group-hover:text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Mes Rendez-vous
+                                        </a>
 
-                                    <a href="${pageContext.request.contextPath}/appointments/calendar"
-                                       class="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors group">
-                                        <svg class="w-4 h-4 mr-2 text-gray-400 group-hover:text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                        Calendar
-                                    </a>
+                                        <a href="${pageContext.request.contextPath}/appointments/calendar"
+                                           class="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors group">
+                                            <svg class="w-4 h-4 mr-2 text-gray-400 group-hover:text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Calendar
+                                        </a>
+                                    </c:if>
+
+                                        <%-- ✅ DOCTOR Menu Items --%>
+                                    <c:if test="${sessionScope.currentUser.role == 'DOCTOR'}">
+                                        <a href="${pageContext.request.contextPath}/dashboard/appointments/list"
+                                           class="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group">
+                                            <svg class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                            Mes Appointments
+                                        </a>
+
+                                        <a href="${pageContext.request.contextPath}/dashboard/medicalNotes"
+                                           class="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors group">
+                                            <svg class="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                            </svg>
+                                            Medical Notes
+                                        </a>
+                                    </c:if>
+
+                                        <%-- ✅ ADMIN/STAFF Menu Items --%>
+                                    <c:if test="${sessionScope.currentUser.role == 'ADMIN' || sessionScope.currentUser.role == 'STAFF'}">
+                                        <a href="${pageContext.request.contextPath}/dashboard/home.jsp"
+                                           class="flex items-center px-3 py-2 text-xs text-gray-700 hover:bg-purple-50 hover:text-purple-700 transition-colors group">
+                                            <svg class="w-4 h-4 mr-2 text-gray-400 group-hover:text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                                            </svg>
+                                            Dashboard Admin
+                                        </a>
+                                    </c:if>
                                 </div>
 
                                 <!-- Logout Section - Compact -->
@@ -109,8 +149,9 @@
                     </div>
                 </c:when>
                 <c:otherwise>
+                    <%-- ✅ Not Authenticated - Show Login/Register --%>
                     <div class="flex items-center space-x-2">
-                        <a href="${pageContext.request.contextPath}/login"
+                        <a href="${pageContext.request.contextPath}/pages/auth/login.jsp"
                            class="px-4 py-1.5 rounded-lg border border-teal-500/50 hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-all duration-300 text-xs font-medium">
                             Connexion
                         </a>

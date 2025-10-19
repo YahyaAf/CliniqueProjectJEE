@@ -55,6 +55,12 @@ public class CreateAppointmentServlet extends HttpServlet {
             return;
         }
 
+        if (!"PATIENT".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Patients only.");
+            resp.sendRedirect(req.getContextPath() + "/");
+            return;
+        }
+
         UUID userId = currentUser.getId();
         Optional<PatientResponseDTO> patientOpt = authService.getPatientByUserId(userId);
 

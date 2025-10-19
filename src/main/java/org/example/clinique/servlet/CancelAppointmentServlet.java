@@ -39,6 +39,12 @@ public class CancelAppointmentServlet extends HttpServlet {
             return;
         }
 
+        if (!"PATIENT".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Patients only.");
+            resp.sendRedirect(req.getContextPath() + "/");
+            return;
+        }
+
         try {
             String appointmentIdStr = req.getParameter("appointmentId");
 

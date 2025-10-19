@@ -34,6 +34,12 @@ public class AppointmentCalendarServlet extends HttpServlet {
             return;
         }
 
+        if (!"PATIENT".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Patients only.");
+            resp.sendRedirect(req.getContextPath() + "/");
+            return;
+        }
+
         try {
             // Récupérer le mois et l'année depuis les paramètres (ou utiliser le mois actuel)
             String yearParam = req.getParameter("year");

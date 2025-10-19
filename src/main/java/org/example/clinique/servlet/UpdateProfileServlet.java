@@ -38,6 +38,7 @@ public class UpdateProfileServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // ✅ 1. CHECK: User déjà connecté?
         UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
 
         if (currentUser == null) {
@@ -45,15 +46,30 @@ public class UpdateProfileServlet extends HttpServlet {
             return;
         }
 
-        UUID userId = currentUser.getId();
-        authService.getPatientByUserId(userId).ifPresent(patient -> req.setAttribute("patient", patient));
+        // ✅ 2. CHECK: User est PATIENT?
+        if (!"PATIENT".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Patients only.");
+            resp.sendRedirect(req.getContextPath() + "/");
+            return;
+        }
 
+        // ✅ 3. Récupérer patient data
+        UUID userId = currentUser.getId();
+        Optional<PatientResponseDTO> patientOpt = authService.getPatientByUserId(userId);
+
+        if (patientOpt.isEmpty()) {
+            req.getSession().setAttribute("errorMessage", "Patient profile not found.");
+            resp.sendRedirect(req.getContextPath() + "/");
+            return;
+        }
+
+        req.setAttribute("patient", patientOpt.get());
         req.getRequestDispatcher("/pages/auth/editProfile.jsp").forward(req, resp);
     }
 
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // ✅ 1. CHECK: User déjà connecté?
         UserResponseLoginDTO currentUser = (UserResponseLoginDTO) req.getSession().getAttribute("currentUser");
 
         if (currentUser == null) {
@@ -61,33 +77,56 @@ public class UpdateProfileServlet extends HttpServlet {
             return;
         }
 
-        UUID userId = currentUser.getId();
-        Optional<PatientResponseDTO> patientOpt = authService.getPatientByUserId(userId);
-        
-        PatientResponseDTO patient = patientOpt.get();
-        UUID patientId = patient.getId();
-
-
-        PatientRegisterRequestDTO dto = new PatientRegisterRequestDTO();
-        dto.setFullName(req.getParameter("fullName"));
-        dto.setEmail(req.getParameter("email"));
-        dto.setPassword(req.getParameter("password"));
-        dto.setCin(req.getParameter("cin"));
-        dto.setDateOfBirth(LocalDate.parse(req.getParameter("dateOfBirth")));
-        dto.setGender(Gender.valueOf(req.getParameter("gender")));
-        dto.setBloodType(BloodType.valueOf(req.getParameter("bloodType")));
-        dto.setInsuranceNumber(req.getParameter("insuranceNumber"));
-
-        List<String> errors = validator.validate(dto);
-        if (!errors.isEmpty()) {
-            req.setAttribute("errors", errors);
-            req.setAttribute("patient", dto);
-            req.getRequestDispatcher("/pages/auth/editProfile.jsp").forward(req, resp);
+        // ✅ 2. CHECK: User est PATIENT?
+        if (!"PATIENT".equals(currentUser.getRole())) {
+            req.getSession().setAttribute("errorMessage", "Access denied. Patients only.");
+            resp.sendRedirect(req.getContextPath() + "/");
             return;
         }
 
-        authService.updatePatient(patientId, dto);
-        resp.sendRedirect(req.getContextPath());
+        // ✅ 3. Récupérer patient
+        UUID userId = currentUser.getId();
+        Optional<PatientResponseDTO> patientOpt = authService.getPatientByUserId(userId);
+
+        if (patientOpt.isEmpty()) {
+            req.getSession().setAttribute("errorMessage", "Patient profile not found.");
+            resp.sendRedirect(req.getContextPath() + "/");
+            return;
+        }
+
+        PatientResponseDTO patient = patientOpt.get();
+        UUID patientId = patient.getId();
+
+        // ✅ 4. Traiter update
+        try {
+            PatientRegisterRequestDTO dto = new PatientRegisterRequestDTO();
+            dto.setFullName(req.getParameter("fullName"));
+            dto.setEmail(req.getParameter("email"));
+            dto.setPassword(req.getParameter("password"));
+            dto.setCin(req.getParameter("cin"));
+            dto.setDateOfBirth(LocalDate.parse(req.getParameter("dateOfBirth")));
+            dto.setGender(Gender.valueOf(req.getParameter("gender")));
+            dto.setBloodType(BloodType.valueOf(req.getParameter("bloodType")));
+            dto.setInsuranceNumber(req.getParameter("insuranceNumber"));
+
+            // Validation
+            List<String> errors = validator.validate(dto);
+            if (!errors.isEmpty()) {
+                req.setAttribute("errors", errors);
+                req.setAttribute("patient", patient);
+                req.getRequestDispatcher("/pages/auth/editProfile.jsp").forward(req, resp);
+                return;
+            }
+
+            // Update patient
+            authService.updatePatient(patientId, dto);
+
+            req.getSession().setAttribute("successMessage", "Profile updated successfully!");
+            resp.sendRedirect(req.getContextPath() + "/");
+
+        } catch (Exception e) {
+            req.getSession().setAttribute("errorMessage", "Error updating profile: " + e.getMessage());
+            resp.sendRedirect(req.getContextPath() + "/patient/update-profile");
+        }
     }
 }
-
