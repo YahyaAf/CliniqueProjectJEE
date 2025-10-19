@@ -10,6 +10,7 @@ import org.example.clinique.repository.implementation.*;
 import org.example.clinique.service.AppointmentService;
 import org.example.clinique.service.AuthService;
 import org.example.clinique.service.SpecialiteService;
+import org.example.clinique.validator.AppointmentValidator;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class CreateAppointmentServlet extends HttpServlet {
     private AppointmentService appointmentService;
     private SpecialiteService specialiteService;
     private AuthService authService;
+    private AppointmentValidator appointmentValidator;
 
     @Override
     public void init() throws ServletException {
@@ -39,6 +41,8 @@ public class CreateAppointmentServlet extends HttpServlet {
                 new StaffRepositoryImpl(),
                 new SpecialiteRepositoryImpl()
         );
+        // Initialiser le validator
+        this.appointmentValidator = new AppointmentValidator(new AppointmentRepositoryImpl());
     }
 
     @Override
@@ -148,6 +152,15 @@ public class CreateAppointmentServlet extends HttpServlet {
             dto.setAppointmentDate(LocalDate.parse(dateStr));
             dto.setStartTime(LocalTime.parse(startTimeStr));
             dto.setEndTime(LocalTime.parse(endTimeStr));
+
+            // VALIDER L'APPOINTMENT
+            AppointmentValidator.ValidationResult validationResult = appointmentValidator.validate(dto);
+
+            if (!validationResult.isValid()) {
+                req.setAttribute("errorMessage", validationResult.getErrorMessage());
+                doGet(req, resp);
+                return;
+            }
 
             // Créer l'appointment
             AppointmentResponseDTO createdAppointment = appointmentService.createAppointment(dto);

@@ -200,11 +200,17 @@ public class AppointmentService {
         appointmentRepository.delete(appointmentId);
     }
 
-    // Récupérer les créneaux disponibles pour un doctor à une date
     public List<TimeSlotDTO> getAvailableTimeSlots(UUID doctorId, LocalDate date) {
+        // Constants pour validation
+        final int BUFFER = 5; // minutes
+        final LocalTime LUNCH_START = LocalTime.of(12, 0);
+        final LocalTime LUNCH_END = LocalTime.of(13, 0);
+
+        // 1. Récupérer le jour de la semaine
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         String dayName = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.ENGLISH).toUpperCase();
 
+        // 2. Récupérer les availabilities du doctor pour ce jour
         List<Availability> availabilities = availabilityRepository.findByDoctorId(doctorId).stream()
                 .filter(av -> av.getDayOfWeek().name().equals(dayName) && av.isAvailable())
                 .collect(Collectors.toList());
@@ -213,34 +219,103 @@ public class AppointmentService {
             return Collections.emptyList();
         }
 
+        // 3. Récupérer les appointments existants (triés par heure)
         List<Appointment> existingAppointments = appointmentRepository.findByDoctorIdAndDate(doctorId, date).stream()
                 .filter(app -> app.getStatus() != AppointmentStatusEnum.CANCELED)
+                .sorted((a, b) -> a.getStartTime().compareTo(b.getStartTime()))
                 .collect(Collectors.toList());
 
-        List<TimeSlotDTO> availableSlots = new ArrayList<>();
+        // 4. Récupérer le nom du doctor
         Optional<Doctor> doctorOpt = doctorRepository.findById(doctorId);
         String doctorName = doctorOpt.map(d -> d.getUser().getFullName()).orElse("Unknown");
 
+        // 5. Générer les slots pour chaque availability
+        List<TimeSlotDTO> availableSlots = new ArrayList<>();
+
         for (Availability availability : availabilities) {
-            LocalTime currentTime = availability.getStartTime();
-            LocalTime endTime = availability.getEndTime();
+            LocalTime availabilityStart = availability.getStartTime();
+            LocalTime availabilityEnd = availability.getEndTime();
             int slotDuration = availability.getSlotDuration();
 
-            while (currentTime.plusMinutes(slotDuration).isBefore(endTime) ||
-                    currentTime.plusMinutes(slotDuration).equals(endTime)) {
+            // Commencer du début de l'availability
+            LocalTime currentTime = availabilityStart;
+            int appointmentIndex = 0;
 
-                LocalTime slotEnd = currentTime.plusMinutes(slotDuration);
+            while (currentTime.plusMinutes(slotDuration).isBefore(availabilityEnd) ||
+                    currentTime.plusMinutes(slotDuration).equals(availabilityEnd)) {
 
-                LocalTime finalCurrentTime = currentTime;
-                boolean isOccupied = existingAppointments.stream()
-                        .anyMatch(app ->
-                                (finalCurrentTime.isBefore(app.getEndTime()) && slotEnd.isAfter(app.getStartTime()))
+                // Vérifier s'il y a un appointment à cette heure
+                boolean slotOccupied = false;
+
+                if (appointmentIndex < existingAppointments.size()) {
+                    Appointment nextApt = existingAppointments.get(appointmentIndex);
+                    LocalTime aptStart = nextApt.getStartTime();
+                    LocalTime aptEnd = nextApt.getEndTime();
+
+                    // Si on arrive à un appointment existant DANS cette availability
+                    if ((aptStart.isAfter(availabilityStart) || aptStart.equals(availabilityStart)) &&
+                            (aptEnd.isBefore(availabilityEnd) || aptEnd.equals(availabilityEnd))) {
+
+                        if (currentTime.equals(aptStart) ||
+                                (currentTime.isBefore(aptStart) && currentTime.plusMinutes(slotDuration).isAfter(aptStart))) {
+
+                            // Afficher le slot comme OCCUPIED
+                            TimeSlotDTO occupiedSlot = new TimeSlotDTO(
+                                    date,
+                                    aptStart,
+                                    aptEnd,
+                                    doctorId,
+                                    doctorName,
+                                    false // not available
+                            );
+                            availableSlots.add(occupiedSlot);
+
+                            // Sauter au temps APRÈS l'appointment + buffer
+                            currentTime = aptEnd.plusMinutes(BUFFER);
+                            appointmentIndex++;
+                            slotOccupied = true;
+                        }
+                    }
+                }
+
+                if (!slotOccupied) {
+                    LocalTime slotStart = currentTime;
+                    LocalTime slotEnd = currentTime.plusMinutes(slotDuration);
+
+                    // Vérifier si le slot dépasse l'availability end
+                    if (slotEnd.isAfter(availabilityEnd)) {
+                        break;
+                    }
+
+                    // Vérifier lunch break (12h-13h)
+                    boolean overlapsLunch = !(slotEnd.isBefore(LUNCH_START) ||
+                            slotEnd.equals(LUNCH_START) ||
+                            slotStart.isAfter(LUNCH_END) ||
+                            slotStart.equals(LUNCH_END));
+
+                    if (overlapsLunch) {
+                        // Sauter la pause déjeuner
+                        if (currentTime.isBefore(LUNCH_START)) {
+                            currentTime = LUNCH_END;
+                        } else {
+                            currentTime = currentTime.plusMinutes(slotDuration + BUFFER);
+                        }
+                    } else {
+                        // Créer un slot AVAILABLE
+                        TimeSlotDTO slot = new TimeSlotDTO(
+                                date,
+                                slotStart,
+                                slotEnd,
+                                doctorId,
+                                doctorName,
+                                true // available
                         );
+                        availableSlots.add(slot);
 
-                TimeSlotDTO slot = new TimeSlotDTO(date, currentTime, slotEnd, doctorId, doctorName, !isOccupied);
-                availableSlots.add(slot);
-
-                currentTime = slotEnd;
+                        // Avancer de slotDuration + buffer
+                        currentTime = slotEnd.plusMinutes(BUFFER);
+                    }
+                }
             }
         }
 
