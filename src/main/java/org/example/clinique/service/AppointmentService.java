@@ -358,4 +358,19 @@ public class AppointmentService {
         appointment.setStatus(AppointmentStatusEnum.CANCELED);
         appointmentRepository.update(appointment);
     }
+
+    /**
+     * Annuler appointment sans validation (validation déjà faite dans servlet)
+     */
+    public void cancelAppointmentWithoutValidation(UUID appointmentId) {
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(appointmentId);
+
+        if (appointmentOpt.isEmpty()) {
+            throw new RuntimeException("Appointment not found with id: " + appointmentId);
+        }
+
+        Appointment appointment = appointmentOpt.get();
+        appointment.setStatus(AppointmentStatusEnum.CANCELED);
+        appointmentRepository.update(appointment);
+    }
 }
